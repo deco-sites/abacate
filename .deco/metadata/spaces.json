@@ -347,6 +347,16 @@
           "state": {
             "__signal": null
           }
+        },
+        "settings::domains::adjustments-horizontal::domains::%7B%7D": {
+          "name": "domains",
+          "icon": "adjustments-horizontal",
+          "render": "function",
+          "viewId": "domains",
+          "id": "settings::domains::adjustments-horizontal::domains::%7B%7D",
+          "state": {
+            "__signal": null
+          }
         }
       },
       "category": "Management"
@@ -985,7 +995,7 @@
         "content": [
           {
             "type": "stack",
-            "width": 100,
+            "width": 100.00000000000001,
             "isClosable": true,
             "reorderEnabled": true,
             "title": "",
