@@ -6,6 +6,7 @@ import type { Manifest as ManifestShopify } from "apps/shopify/manifest.gen.ts";
 import type { Manifest as ManifestWake } from "apps/wake/manifest.gen.ts";
 import type { Manifest as ManifestLinx } from "apps/linx/manifest.gen.ts";
 import type { Manifest as ManifestNuvemshop } from "apps/nuvemshop/manifest.gen.ts";
+import type { Manifest as CheckoutNuvemshop } from "apps/checkout/manifest.gen.ts";
 
 export const invoke = proxy<
   & Manifest
@@ -15,4 +16,5 @@ export const invoke = proxy<
   & ManifestWake
   & ManifestLinx
   & ManifestNuvemshop
+  & CheckoutNuvemshop
 >();

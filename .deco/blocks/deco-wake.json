@@ -1,0 +1,14 @@
+{
+  "__resolveType": "site/apps/deco/wake.ts",
+  "storefrontToken": {
+    "__resolveType": "website/loaders/secret.ts",
+    "encrypted": "01c5bbb737051c77824f87b84cf0195e2b2dcb56a29befe6b65627c5860029dd2879b4614fe9c2f6a58534c4101f115a"
+  },
+  "platform": "wake",
+  "account": "partnersdeco",
+  "checkoutUrl": "https://partnersdeco.checkout.fbits.store/",
+  "token": {
+    "__resolveType": "website/loaders/secret.ts",
+    "encrypted": "640af156362afa61e7a3a90381f8cb2c9d0e0225d072ed137d9e85d345b31b51771c408a35a64f22aca6e01e780f48a1"
+  }
+}
