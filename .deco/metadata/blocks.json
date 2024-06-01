@@ -231,10 +231,6 @@
     "blockType": "apps",
     "__resolveType": "decohub/apps/workflows.ts"
   },
-  "/.deco/blocks/algolia.json": {
-    "blockType": "apps",
-    "__resolveType": "decohub/apps/algolia.ts"
-  },
   "/.deco/blocks/files.json": {
     "blockType": "apps",
     "__resolveType": "decohub/apps/files.ts"
@@ -299,17 +295,9 @@
     "blockType": "apps",
     "__resolveType": "decohub/apps/vtex.ts"
   },
-  "/.deco/blocks/weather.json": {
-    "blockType": "apps",
-    "__resolveType": "decohub/apps/weather.ts"
-  },
   "/.deco/blocks/Teste%20AB.json": {
     "blockType": "matchers",
     "__resolveType": "website/matchers/random.ts"
-  },
-  "/.deco/blocks/htmx.json": {
-    "blockType": "apps",
-    "__resolveType": "decohub/apps/htmx.ts"
   },
   "/.deco/blocks/pages-Home%2520for%2520Mobile%2520App-906989.json": {
     "name": "Home for Mobile App",
@@ -324,5 +312,11 @@
   "/.deco/blocks/deco-wake.json": {
     "blockType": "apps",
     "__resolveType": "site/apps/deco/wake.ts"
+  },
+  "/.deco/blocks/pages-Checkout-787333.json": {
+    "name": "Checkout",
+    "path": "/_checkout",
+    "blockType": "pages",
+    "__resolveType": "website/pages/Page.tsx"
   }
 }

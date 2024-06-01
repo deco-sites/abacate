@@ -1,10 +1,9 @@
 import { Signal, useSignal } from '@preact/signals'
-import { useCallback, useEffect } from 'preact/hooks'
+import { useCallback } from 'preact/hooks'
 import Button from '../../components/ui/Button.tsx'
 import { formatPrice } from '../../sdk/format.ts'
 import { useCart } from 'apps/vtex/hooks/useCart.ts'
 import type { SimulationOrderForm, SKU, Sla } from 'apps/vtex/utils/types.ts'
-import { invoke } from '../../runtime.ts'
 
 export interface Props {
     items: Array<SKU>
@@ -24,8 +23,6 @@ function ShippingContent({
     simulation: Signal<SimulationOrderForm | null>
 }) {
     const { cart } = useCart()
-
-    console.log(invoke.checkout.loaders.abacate({ s: 'asdasdasdasd' }).then(res => console.log(res)))
 
     const methods =
         simulation.value?.logisticsInfo?.reduce((initial, { slas }) => [...initial, ...slas], [] as Sla[]) ?? []
