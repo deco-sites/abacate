@@ -243,12 +243,6 @@
     "blockType": "loaders",
     "__resolveType": "commerce/loaders/navbar.ts"
   },
-  "/.deco/blocks/pages-aiassistant-c38e51d3049a.json": {
-    "name": "AI Assistant",
-    "path": "/ai-assistant-deco-test",
-    "blockType": "pages",
-    "__resolveType": "website/pages/Page.tsx"
-  },
   "/.deco/blocks/pages-category-7493d4326022.json": {
     "name": "Category",
     "path": "/*",
@@ -269,7 +263,7 @@
   },
   "/.deco/blocks/pages-productpage-ce4850591828.json": {
     "name": "Product Page",
-    "path": "/:slug/p",
+    "path": "/produto/:slug",
     "blockType": "pages",
     "__resolveType": "website/pages/Page.tsx"
   },
@@ -279,21 +273,9 @@
     "blockType": "pages",
     "__resolveType": "website/pages/Page.tsx"
   },
-  "/.deco/blocks/plausible.json": {
-    "blockType": "apps",
-    "__resolveType": "decohub/apps/analytics.ts"
-  },
   "/.deco/blocks/site.json": {
     "blockType": "apps",
     "__resolveType": "site/apps/site.ts"
-  },
-  "/.deco/blocks/vtex-trigger.json": {
-    "blockType": "workflows",
-    "__resolveType": "vtex/workflows/events.ts"
-  },
-  "/.deco/blocks/vtex.json": {
-    "blockType": "apps",
-    "__resolveType": "decohub/apps/vtex.ts"
   },
   "/.deco/blocks/Teste%20AB.json": {
     "blockType": "matchers",

@@ -1,1 +1,29 @@
-{"data":{"facets":[],"hitsPerPage":12,"startingPage":0,"__resolveType":"algolia/loaders/product/listingPage.ts","sortFacetValuesBy":"count"},"extensions":[{"__resolveType":"vtex/loaders/product/extensions/listingPage.ts"}],"__resolveType":"commerce/loaders/product/extensions/listingPage.ts"}
+{
+  "data": {
+    "facets": [],
+    "hitsPerPage": 12,
+    "startingPage": 0,
+    "__resolveType": "wake/",
+    "sortFacetValuesBy": "count",
+    "limit": 12,
+    "operation": "AND",
+    "sort": "NAME:ASC",
+    "pageOffset": 0,
+    "@type": "ProductListingPage",
+    "breadcrumb": {
+      "@type": "BreadcrumbList"
+    },
+    "filters": [],
+    "products": [],
+    "pageInfo": {
+      "pageTypes": []
+    },
+    "sortOptions": []
+  },
+  "extensions": [
+    {
+      "__resolveType": "vtex/loaders/product/extensions/listingPage.ts"
+    }
+  ],
+  "__resolveType": "commerce/loaders/product/extensions/listingPage.ts"
+}

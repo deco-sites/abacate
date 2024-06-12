@@ -145,29 +145,8 @@
       },
       "products": {
         "crossSelling": "similars",
-        "__resolveType": "wake/loaders/productList.ts",
-        "filters": {
-          "attributes": {
-            "id": [],
-            "name": [],
-            "type": [],
-            "value": []
-          },
-          "brandId": [],
-          "categoryId": [],
-          "ean": [],
-          "productId": [],
-          "productVariantId": [],
-          "sameParentAs": [],
-          "sku": [],
-          "stocks": {
-            "dcId": [],
-            "dcName": []
-          },
-          "prices": {}
-        },
-        "first": 8,
-        "sortDirection": "ASC"
+        "__resolveType": "wake/loaders/recommendations.ts",
+        "algorithm": "DEFAULT"
       },
       "cardLayout": {
         "layout": {
@@ -246,7 +225,7 @@
         "href": "/feminino"
       },
       "section": {
-        "title": "Summer Vibes",
+        "title": "Summer Vibesa",
         "layout": {
           "showArrows": true,
           "headerfontSize": "Normal",
@@ -255,14 +234,6 @@
             "mobile": 1,
             "desktop": 1
           }
-        },
-        "products": {
-          "props": {
-            "sort": "price:desc",
-            "count": 3,
-            "query": "camisa"
-          },
-          "__resolveType": "vtex/loaders/intelligentSearch/productList.ts"
         },
         "cardLayout": {
           "layout": {
@@ -291,47 +262,21 @@
           },
           "__resolveType": "site/loaders/Layouts/ProductCard.tsx"
         },
-        "__resolveType": "site/sections/Product/ProductShelf.tsx"
-      }
-    },
-    {
-      "__resolveType": "site/sections/Product/ProductShelfTabbed.tsx",
-      "tabs": [
-        {
-          "title": "Woman",
-          "products": {
-            "props": {
-              "sort": "price:desc",
-              "count": 8,
-              "query": "vestido"
-            },
-            "__resolveType": "vtex/loaders/intelligentSearch/productList.ts"
-          }
-        },
-        {
-          "title": "Man",
-          "products": {
-            "props": {
-              "sort": "price:desc",
-              "count": 8,
-              "collection": "140"
-            },
-            "__resolveType": "vtex/loaders/intelligentSearch/productList.ts"
-          }
+        "__resolveType": "site/sections/Product/ProductShelf.tsx",
+        "description": "l",
+        "products": {
+          "__resolveType": "wake/loaders/productList.ts",
+          "filters": {},
+          "first": 12,
+          "getVariations": false,
+          "sortDirection": "ASC",
+          "sortKey": "DISCOUNT"
         }
-      ],
-      "title": "Best Sellers",
-      "layout": {
-        "headerfontSize": "Large",
-        "headerAlignment": "center"
-      },
-      "cardLayout": {
-        "__resolveType": "Product Card Layout - 01"
       }
     },
     {
-      "title": "Blogposts",
       "__resolveType": "site/sections/Content/BlogPosts.tsx",
+      "title": "Blogposts",
       "posts": [
         {
           "alt": "Item of the Summer",

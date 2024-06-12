@@ -3,9 +3,10 @@
   "storefrontToken": {
     "__resolveType": "website/loaders/secret.ts",
     "encrypted": "01c5bbb737051c77824f87b84cf0195e2b2dcb56a29befe6b65627c5860029dd2879b4614fe9c2f6a58534c4101f115a",
-    "name": "A"
+    "name": "ABACATE"
   },
   "platform": "wake",
   "account": "partnersdeco",
+  "useCustomCheckout": true,
   "checkoutUrl": "https://partnersdeco.checkout.fbits.store/"
 }

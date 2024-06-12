@@ -1,1 +1,34 @@
-{"data":{"sort":"price:desc","count":8,"fuzzy":"automatic","pageOffset":1,"__resolveType":"vtex/loaders/intelligentSearch/productListingPage.ts","selectedFacets":[]},"extensions":[{"__resolveType":"vtex/loaders/product/extensions/listingPage.ts"}],"__resolveType":"commerce/loaders/product/extensions/listingPage.ts"}
+{
+  "data": {
+    "sort": "NAME:ASC",
+    "__resolveType": "wake/loaders/productListingPage.ts",
+    "limit": 12,
+    "operation": "AND",
+    "filters": {
+      "attributes": {
+        "id": [],
+        "name": [],
+        "type": [],
+        "value": []
+      },
+      "brandId": [],
+      "categoryId": [],
+      "ean": [],
+      "productId": [],
+      "productVariantId": [],
+      "sameParentAs": [],
+      "sku": [],
+      "stocks": {
+        "dcId": [],
+        "dcName": []
+      },
+      "prices": {}
+    }
+  },
+  "extensions": [
+    {
+      "__resolveType": "vtex/loaders/product/extensions/listingPage.ts"
+    }
+  ],
+  "__resolveType": "commerce/loaders/product/extensions/listingPage.ts"
+}

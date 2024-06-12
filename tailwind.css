@@ -55,30 +55,39 @@
   }
 }
 
-.btn {
+.cool-btn {
   background: hsl(209, 100%, 35%);
   border: 1px solid rgba(13, 138, 255, 0.00);
   transition: box-shadow 0.075s ease-in-out;
   box-shadow:
+    /* Dark color */
+    0px 20px 0px 0px rgba(255, 255, 255, 0.15) inset,
+    /* Inner bottom shadow */
+    0px -3px 9px 0px rgba(0, 48, 92, 0.71) inset,
+    /* Outer bottom shadow  */
+    0px 4px 8px 0px rgba(0, 69, 133, 0.38);
+
+  &:hover {
+    background: hsl(209, 100%, 30%);
+    box-shadow:
       /* Dark color */
-      0px 20px 0px 0px rgba(255, 255, 255, 0.15) inset,
+      0px 20px 0px 0px rgba(255, 255, 255, 0.10) inset,
       /* Inner bottom shadow */
       0px -3px 9px 0px rgba(0, 48, 92, 0.71) inset,
       /* Outer bottom shadow  */
       0px 4px 8px 0px rgba(0, 69, 133, 0.38);
-
-  &:hover {
-      background: hsl(209, 100%, 30%);
-      box-shadow:
-          /* Dark color */
-          0px 20px 0px 0px rgba(255, 255, 255, 0.10) inset,
-          /* Inner bottom shadow */
-          0px -3px 9px 0px rgba(0, 48, 92, 0.71) inset,
-          /* Outer bottom shadow  */
-          0px 4px 8px 0px rgba(0, 69, 133, 0.38);
   }
 
   &:active {
-      scale: 0.95;
+    scale: 0.95;
   }
+}
+
+select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right .5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+  appearance: none;
 }
