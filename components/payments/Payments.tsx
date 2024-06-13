@@ -7,6 +7,8 @@ import { invoke } from '../../runtime.ts'
 import { formatPrice } from '../../sdk/format.ts'
 import { useOffer } from '../../sdk/useOffer.ts'
 import { Total } from '../checkout/Foo.tsx'
+
+// https://github.com/denoland/fresh/discussions/432#discussioncomment-3182480
 import Cards from 'https://esm.sh/react-credit-cards-2@1.0.2?alias=react:preact/compat&external=preact'
 
 const selectedShipping = signal<Awaited<ReturnType<typeof invoke.wake.loaders.selectedShipping>>>(null)
