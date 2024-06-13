@@ -1,5 +1,9 @@
 asd@asdasda.sadas
 
+1bb4c27d-3fc7-48b4-a985-7199f31991bc
+
+
+
 ## Carrinho (/carrinho)
 
 - [x] Lista de produtos
@@ -10,28 +14,28 @@ asd@asdasda.sadas
 - [x] Sub total
 - [x] Deletar
 - [ ] Vendido e entregue por (seller)
-- [ ] Calcular frete
+- [x] Calcular frete
 - [ ] Código de desconto
-- [ ] Total
-- [ ] Sub Total
+- [x] Total
+- [x] Sub Total
 - [x] Botão finalizar compra
-- [ ] Seleção de frete em drop down
+- [x] Seleção de frete em drop down
 
 ## Frete (/frete)
 
-- [ ] Lista de endereços
-- [ ] Formulário adicionar endereço
-- [ ] Nome completo
-- [ ] Cep
-- [ ] Rua
-- [ ] Número
-- [ ] Complemento
-- [ ] Bairro
-- [ ] Cidade
-- [ ] Estado
-- [ ] Telefone
-- [ ] Botão
-- [ ] Lista de produtos
+- [x] Lista de endereços
+- [x] Formulário adicionar endereço
+- [x] Nome completo
+- [x] Cep
+- [x] Rua
+- [x] Número
+- [x] Complemento
+- [x] Bairro
+- [x] Cidade
+- [x] Estado
+- [x] Telefone
+- [x] Botão
+- [x] Lista de produtos
 - [ ] Código de desconto
 - [ ] Embalagem para presente
 - [ ] Adicionar mensagem

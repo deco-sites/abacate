@@ -1,0 +1,13 @@
+{
+  "name": "Pagamento",
+  "path": "/pagamento",
+  "sections": [
+    {
+      "__resolveType": "site/sections/Payments/Payments.tsx"
+    }
+  ],
+  "seo": {
+    "__resolveType": "website/sections/Seo/SeoV2.tsx"
+  },
+  "__resolveType": "website/pages/Page.tsx"
+}

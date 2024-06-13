@@ -1,0 +1,13 @@
+{
+  "name": "Frete",
+  "path": "/frete",
+  "sections": [
+    {
+      "__resolveType": "site/sections/frete/Frete.tsx"
+    }
+  ],
+  "seo": {
+    "__resolveType": "website/sections/Seo/SeoV2.tsx"
+  },
+  "__resolveType": "website/pages/Page.tsx"
+}

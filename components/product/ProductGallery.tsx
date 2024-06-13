@@ -38,7 +38,7 @@ const DESKTOP_COLUMNS = {
 function ProductGallery(
   { products, pageInfo, layout, offset, url }: Props,
 ) {
-  const platform = usePlatform();
+  const platform = 'wake'
   const mobile = MOBILE_COLUMNS[layout?.columns?.mobile ?? 2];
   const desktop = DESKTOP_COLUMNS[layout?.columns?.desktop ?? 4];
 

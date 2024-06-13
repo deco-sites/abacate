@@ -24,9 +24,6 @@
   "caching": {
     "directives": []
   },
-  "commerce": {
-    "platform": "other"
-  },
   "platform": "wake",
   "__resolveType": "site/apps/site.ts",
   "firstByteThresholdMS": true,

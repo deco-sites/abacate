@@ -300,5 +300,17 @@
     "path": "/_checkout",
     "blockType": "pages",
     "__resolveType": "website/pages/Page.tsx"
+  },
+  "/.deco/blocks/pages-Frete-463425.json": {
+    "name": "Frete",
+    "path": "/frete",
+    "blockType": "pages",
+    "__resolveType": "website/pages/Page.tsx"
+  },
+  "/.deco/blocks/pages-Pagamento-929569.json": {
+    "name": "Pagamento",
+    "path": "/pagamento",
+    "blockType": "pages",
+    "__resolveType": "website/pages/Page.tsx"
   }
 }

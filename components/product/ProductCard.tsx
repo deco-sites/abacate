@@ -98,8 +98,8 @@ function ProductCard({
               OFF
             </div>
             <div class="lg:group-hover:block">
-              {platform === "vtex" && (
-                <WishlistButtonVtex
+              {/* {platform === "vtex" && (
+                <WishlistButtonWake
                   productGroupID={productGroupID}
                   productID={productID}
                 />
@@ -109,7 +109,7 @@ function ProductCard({
                   productGroupID={productGroupID}
                   productID={productID}
                 />
-              )}
+              )} */}
             </div>
           </div>
 

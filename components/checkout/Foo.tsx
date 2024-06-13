@@ -15,10 +15,12 @@ const { cart, updateItem, addCoupon } = useCart()
 
 const shippingLoading = signal(false)
 const shipping = signal<Awaited<ReturnType<typeof invoke.wake.actions.shippingSimulation>>>(null)
+const selectedShipping =
+    signal<NonNullable<Awaited<ReturnType<typeof invoke.wake.actions.shippingSimulation>>>[number]>(null)
 
 const checkoutCoupon = signal<Awaited<ReturnType<typeof invoke.wake.loaders.checkoutCoupon>>>(null)
 
-export default function (props: Awaited<ReturnType<typeof loader>>) {
+export default function () {
     const user = useSignal<Awaited<ReturnType<typeof invoke.wake.loaders.user>> | null>(null)
     const logged = useComputed(() => user.value !== null)
     const addresses = useSignal([] as Awaited<ReturnType<typeof invoke.wake.loaders.userAddresses>>)
@@ -95,7 +97,10 @@ export default function (props: Awaited<ReturnType<typeof loader>>) {
                     </div>
                     <div class='p-4 border border-stone-400 flex flex-col gap-4 divider-y divider-stone-500'>
                         <Shipping />
+                        <div class='w-full h-px bg-stone-400 my-2' />
                         <Coupon />
+                        <div class='w-full h-px bg-stone-400 my-2' />
+                        <Total shippingPrice={selectedShipping.value?.value} />
                     </div>
                 </div>
             )}
@@ -108,7 +113,7 @@ export default function (props: Awaited<ReturnType<typeof loader>>) {
     )
 }
 
-function formatShipping(
+export function formatShipping(
     shipping: NonNullable<Awaited<ReturnType<typeof invoke.wake.actions.shippingSimulation>>>[number],
 ) {
     if (!shipping) throw new Error('Shipping null or undefined')
@@ -127,10 +132,6 @@ function formatShipping(
     return `${price} - ${name} - ${deadline}`
 }
 
-export function loader(_props: object, req: Request, ctx: AppContext) {
-    return { ..._props }
-}
-
 function ShippingOptions() {
     return (
         <div class='flex items-center border border-stone-400 px-3 py-2 ml-4 gap-4'>
@@ -138,6 +139,11 @@ function ShippingOptions() {
             <select
                 name='shipping'
                 class='w-full px-4 py-2 text-sm text-black border border-stone-500 bg-stone-200 outline-0'
+                onChange={e => {
+                    const id = e.currentTarget.value
+
+                    selectedShipping.value = shipping.value!.find(i => i!.shippingQuoteId === id)!
+                }}
             >
                 <option disabled selected>
                     Selecione
@@ -145,7 +151,7 @@ function ShippingOptions() {
                 {shipping
                     .value!.toSorted((a, b) => a!.value - b!.value)
                     .map(i => (
-                        <option value={i!.id!}>{formatShipping(i)}</option>
+                        <option value={i!.shippingQuoteId!}>{formatShipping(i)}</option>
                     ))}
             </select>
 
@@ -241,6 +247,25 @@ function Coupon() {
                 {loading.value ? 'APLICANDO' : checkoutCoupon.value ? 'CUPOM APLICADO COM SUCESSO!' : 'APLICAR'}
             </button>
         </form>
+    )
+}
+
+export function Total({ shippingPrice }: { shippingPrice?: number }) {
+    return (
+        <div class='flex flex-col gap-1'>
+            <div class='flex justify-between items-center'>
+                <span class='text-sm'>SUBTOTAL</span>
+                <span class='text-sm'>{formatPrice(cart.value.subtotal)}</span>
+            </div>
+            <div class='flex justify-between items-center'>
+                <span class='text-sm'>FRETE TOTAL</span>
+                <span class='text-sm'>{shippingPrice ? formatPrice(shippingPrice) : 'R$ 0,00'}</span>
+            </div>
+            <div class='flex justify-between items-center'>
+                <span class='text-sm font-bold'>TOTAL</span>
+                <span class='text-sm font-bold'>{formatPrice(cart.value.subtotal + (shippingPrice ?? 0))}</span>
+            </div>
+        </div>
     )
 }
 
