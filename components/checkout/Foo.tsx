@@ -259,7 +259,7 @@ export function Total({ shippingPrice }: { shippingPrice?: number }) {
             </div>
             <div class='flex justify-between items-center'>
                 <span class='text-sm'>FRETE TOTAL</span>
-                <span class='text-sm'>{shippingPrice ? formatPrice(shippingPrice) : 'R$ 0,00'}</span>
+                <span class='text-sm'>{shippingPrice ? formatPrice(shippingPrice) : 'FRETE GRÁTIS'}</span>
             </div>
             <div class='flex justify-between items-center'>
                 <span class='text-sm font-bold'>TOTAL</span>

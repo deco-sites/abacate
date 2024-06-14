@@ -13,6 +13,7 @@ import Cards from 'https://esm.sh/react-credit-cards-2@1.0.2?alias=react:preact/
 
 const selectedShipping = signal<Awaited<ReturnType<typeof invoke.wake.loaders.selectedShipping>>>(null)
 const paymentMethods = signal<Awaited<ReturnType<typeof invoke.wake.loaders.paymentMethods>>>([])
+const paymentMethodsPrices = signal<Awaited<ReturnType<typeof invoke.wake.loaders.calculatePrices>>>(null)
 const products = signal([] as Product[])
 
 const { cart, updateItem, addCoupon, removeCoupon } = useCart()
@@ -25,6 +26,15 @@ export default function () {
         ;(async () => {
             selectedShipping.value = await invoke.wake.loaders.selectedShipping()
             paymentMethods.value = await invoke.wake.loaders.paymentMethods()
+            paymentMethodsPrices.value = await invoke.wake.loaders.calculatePrices({
+                products:
+                    cart.value.products?.map(i => ({
+                        productVariantId: i!.productVariantId,
+                        quantity: i!.quantity,
+                    })) || [],
+            })
+
+            console.log(paymentMethodsPrices.value)
 
             loading.value = false
         })()
@@ -244,7 +254,15 @@ function PaymentMethods() {
                 <div class='px-4 py-3 flex flex-col gap-1.5 peer'>
                     {paymentMethods.value.map(i => (
                         <label class='flex items-center gap-1 text-sm cursor-pointer'>
-                            <input type='radio' name='payment' id={i.name ?? ''} class='hidden peer' />
+                            <input
+                                type='radio'
+                                name='payment'
+                                id={i.name ?? ''}
+                                class='hidden peer'
+                                onInput={async () => {
+                                    await invoke.wake.actions.selectPayment({ paymentMethodId: i.id! })
+                                }}
+                            />
                             <div class='size-4 border border-stone-500 rounded-full flex justify-center items-center peer-checked:bg-black peer-checked:border-black'>
                                 <div class='size-1.5 bg-stone-100 rounded-full' />
                             </div>
@@ -312,7 +330,7 @@ function PaymentMethods() {
                             <span class='font-medium text-sm'>Validade</span>
                             <div class='flex gap-1 items-center'>
                                 <select
-                                    class='p-2 border border-stone-400 w-1/4 h-11'
+                                    class='p-2 border border-stone-400 w-1/4 h-11 text-sm'
                                     onChange={e => {
                                         month.value = e.currentTarget.value
 
@@ -339,7 +357,7 @@ function PaymentMethods() {
                                     <option>12</option>
                                 </select>
                                 <select
-                                    class='p-2 border border-stone-400 w-1/4 h-11'
+                                    class='p-2 border border-stone-400 w-1/4 h-11 text-sm'
                                     onChange={e => {
                                         year.value = e.currentTarget.value
 
@@ -395,6 +413,19 @@ function PaymentMethods() {
                                 }}
                             />
                         </div>
+
+                        <div class='flex flex-col gap-1 w-full'>
+                            <span class='font-medium text-sm'>Parcelamento</span>
+                            <div class='flex gap-1 items-center'>
+                                <select class='p-2 border border-stone-400 w-full h-11 text-sm' onChange={e => {}}>
+                                    {paymentMethodsPrices.value?.installmentPlans
+                                        ?.find(i => i?.displayName?.startsWith('Cartão'))
+                                        ?.installments?.map(i => (
+                                            <option>{`${i?.number === 1 ? 'À vista' : `${i?.number} parcelas`} ${formatPrice(i!.value)} ${i?.fees ? 'com' : 'sem'} juros`}</option>
+                                        ))}
+                                </select>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -409,11 +440,11 @@ function Breadcrumb() {
                 Carrinho
             </a>
             <span class='text-sm'>{'>'}</span>
-            <a href='/frete' class='text-sm font-bold'>
+            <a href='/frete' class='text-sm'>
                 Frete
             </a>
             <span class='text-sm'>{'>'}</span>
-            <a href='/pagamento' class='text-sm'>
+            <a href='/pagamento' class='text-sm font-bold'>
                 Pagamento
             </a>
         </div>

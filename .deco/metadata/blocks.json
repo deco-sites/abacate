@@ -296,8 +296,8 @@
     "__resolveType": "site/apps/deco/wake.ts"
   },
   "/.deco/blocks/pages-Checkout-787333.json": {
-    "name": "Checkout",
-    "path": "/_checkout",
+    "name": "Carrinho",
+    "path": "/carrinho",
     "blockType": "pages",
     "__resolveType": "website/pages/Page.tsx"
   },
