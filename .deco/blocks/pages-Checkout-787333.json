@@ -3,7 +3,7 @@
   "path": "/carrinho",
   "sections": [
     {
-      "__resolveType": "site/sections/Checkout/Foo.tsx"
+      "__resolveType": "site/sections/Carrinho/Carrinho.tsx"
     }
   ],
   "seo": {

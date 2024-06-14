@@ -19,6 +19,12 @@
     },
     {
       "__resolveType": "website/loaders/redirects.ts"
+    },
+    {
+      "__resolveType": "wake/loaders/proxy.ts",
+      "extraPathsToProxy": [],
+      "excludePathsFromDecoSiteMap": [],
+      "includeSiteMap": []
     }
   ],
   "caching": {
@@ -35,5 +41,8 @@
   },
   "flavor": {
     "framework": "fresh"
+  },
+  "commerce": {
+    "platform": "other"
   }
 }

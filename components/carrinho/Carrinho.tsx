@@ -1,9 +1,7 @@
 import { signal, useComputed, useSignal, useSignalEffect } from '@preact/signals'
-import type { AppContext } from 'apps/wake/mod.ts'
 import { invoke } from '../../runtime.ts'
 import debounce from '../../sdk/debounce.ts'
 import useCEP from '../../sdk/useCEP.ts'
-import { useId } from '../../sdk/useId.ts'
 import { useCart } from 'apps/wake/hooks/useCart.ts'
 import { useEffect } from 'preact/hooks'
 import type { Product } from 'apps/commerce/types.ts'
@@ -23,7 +21,6 @@ const checkoutCoupon = signal<Awaited<ReturnType<typeof invoke.wake.loaders.chec
 export default function () {
     const user = useSignal<Awaited<ReturnType<typeof invoke.wake.loaders.user>> | null>(null)
     const logged = useComputed(() => user.value !== null)
-    const addresses = useSignal([] as Awaited<ReturnType<typeof invoke.wake.loaders.userAddresses>>)
     const loading = useSignal(true)
     const products = useSignal([] as Product[])
 
@@ -76,10 +73,10 @@ export default function () {
 
     if (loading.value) return null
 
-    console.log(shipping.value)
-
     return (
-        <div class='flex flex-col gap-4 bg-stone-300 min-h-screen'>
+        <div class='p-4 flex flex-col gap-4 min-h-screen'>
+            <Breadcrumb />
+
             <div class='flex gap-4'>
                 {!logged.value && (
                     <>
@@ -90,25 +87,33 @@ export default function () {
             </div>
 
             {products.value.length > 0 && (
-                <div class='flex gap-6'>
+                <div class='flex items-start gap-6'>
                     <div class='flex flex-col'>
+                        <div class='px-3 py-3 flex justify-between items-center bg-stone-200'>
+                            <h2 class='text-sm font-bold text-stone-500'>ENVIO 01</h2>
+                            <p class='text-sm'>
+                                Vendido e entregue por: <span class='uppercase font-black ml-2'>SHOP2GETHER</span>
+                            </p>
+                        </div>
+
                         <Products products={products.value} />
                         {shipping.value && <ShippingOptions />}
                     </div>
-                    <div class='p-4 border border-stone-400 flex flex-col gap-4 divider-y divider-stone-500'>
+                    <div class='p-4 border border-stone-300 flex flex-col gap-4 divider-y divider-stone-300'>
                         <Shipping />
                         <div class='w-full h-px bg-stone-400 my-2' />
                         <Coupon />
                         <div class='w-full h-px bg-stone-400 my-2' />
                         <Total shippingPrice={selectedShipping.value?.value} />
+                        <a
+                            href='/frete'
+                            class='bg-yellow-800 text-center text-white font-bold text-sm py-2.5 w-full transition-all ease-in-out duration-300 hover:brightness-90 mt-2 disabled:cursor-not-allowed disabled:opacity-50'
+                        >
+                            FINALIZAR COMPRA
+                        </a>
                     </div>
                 </div>
             )}
-
-            <div class='p-4 max-w-[500px]'>
-                <JSONPreview label='User' data={user.value} />
-                <JSONPreview label='Address' data={addresses.value} />
-            </div>
         </div>
     )
 }
@@ -134,11 +139,11 @@ export function formatShipping(
 
 function ShippingOptions() {
     return (
-        <div class='flex items-center border border-stone-400 px-3 py-2 ml-4 gap-4'>
+        <div class='flex items-center border border-stone-300 px-3 py-2 ml-4 gap-4'>
             <span class='text-sm font-bold text-stone-500 whitespace-nowrap'>OPÇÕES DE FRETE</span>
             <select
                 name='shipping'
-                class='w-full px-4 py-2 text-sm text-black border border-stone-500 bg-stone-200 outline-0'
+                class='w-full px-4 py-2 text-sm text-black border border-stone-300 outline-0'
                 onChange={e => {
                     const id = e.currentTarget.value
 
@@ -182,7 +187,7 @@ function Shipping() {
             <input
                 type='text'
                 name='cep'
-                class='p-2 border border-stone-500 bg-stone-200 h-11 text-stone-800 outline-0'
+                class='p-2 border border-stone-300 h-11 text-stone-800 outline-0'
                 placeholder='01001-000'
                 required
                 onInput={e => {
@@ -202,7 +207,7 @@ function Shipping() {
             />
             <button
                 type='submit'
-                class='border border-stone-500 text-sm hover:bg-black hover:border-black hover:text-stone-100 transition-colors py-2 disabled:opacity-40'
+                class='border border-stone-300 text-sm hover:bg-black hover:border-black hover:text-stone-100 transition-colors py-2 disabled:opacity-40'
                 disabled={shippingLoading.value}
             >
                 {shippingLoading.value ? 'CALCULANDO' : 'CALCULAR'}
@@ -233,7 +238,7 @@ function Coupon() {
             <input
                 type='text'
                 name='coupon'
-                class='p-2 border border-stone-500 bg-stone-200 h-11 text-stone-800 outline-0 disabled:opacity-40'
+                class='p-2 border border-stone-300 h-11 text-stone-800 outline-0 disabled:opacity-40'
                 placeholder='Digite aqui'
                 required
                 defaultValue={checkoutCoupon.value || undefined}
@@ -241,7 +246,7 @@ function Coupon() {
             />
             <button
                 type='submit'
-                class='border border-stone-500 text-sm hover:bg-black hover:border-black hover:text-stone-100 transition-colors py-2 disabled:opacity-40'
+                class='border border-stone-300 text-sm hover:bg-black hover:border-black hover:text-stone-100 transition-colors py-2 disabled:opacity-40'
                 disabled={loading.value || !!checkoutCoupon.value}
             >
                 {loading.value ? 'APLICANDO' : checkoutCoupon.value ? 'CUPOM APLICADO COM SUCESSO!' : 'APLICAR'}
@@ -895,7 +900,7 @@ function Signup() {
 
 function Products({ products }: { products: Product[] }) {
     return (
-        <div class='flex flex-col px-4 divide-y divide-stone-500'>
+        <div class='flex flex-col px-4 divide-y divide-stone-300'>
             {products.map(p => {
                 const { listPrice = 0, seller } = useOffer(p.offers)
                 const cartProduct = cart.value.products!.find(i => i?.productVariantId === Number(p.productID))
@@ -905,20 +910,20 @@ function Products({ products }: { products: Product[] }) {
                 const price = cartProduct.price
 
                 return (
-                    <div class='bg-zinc-300 py-4'>
+                    <div class='py-4'>
                         <div class='flex gap-4 items-center'>
                             <img
                                 src={p.image?.[0].url || ''}
                                 alt={p.name || ''}
-                                class='size-32 border border-stone-500'
+                                class='size-32 border border-stone-300'
                             />
                             <div class='flex justify-between w-full'>
                                 <div class='flex flex-col'>
                                     <div class='text-sm'>{seller}</div>
                                     <div class='text-sm'>{p.name}</div>
-                                    <div class='flex flex-col gap-1 mt-5'>
+                                    <div class='flex flex-col gap-0.5 mt-5'>
                                         {p.additionalProperty?.map(i => (
-                                            <div class='text-sm'>
+                                            <div class='text-xs'>
                                                 {i.name}: {i.value}
                                             </div>
                                         ))}
@@ -927,12 +932,12 @@ function Products({ products }: { products: Product[] }) {
                                 <table class='max-w-96 w-full'>
                                     <thead>
                                         <tr>
-                                            <th class='pb-4 font-bold text-sm text-stone-500 text-center'>PREÇO</th>
-                                            <th class='pb-4 font-bold text-sm text-stone-500 text-center'>
+                                            <th class='pb-4 font-bold text-sm text-stone-400 text-center'>PREÇO</th>
+                                            <th class='pb-4 font-bold text-sm text-stone-400 text-center'>
                                                 QUANTIDADE
                                             </th>
-                                            <th class='pb-4 font-bold text-sm text-stone-500 text-center'>SUBTOTAL</th>
-                                            <th class='pb-4 font-bold text-sm text-stone-500 text-center' />
+                                            <th class='pb-4 font-bold text-sm text-stone-400 text-center'>SUBTOTAL</th>
+                                            <th class='pb-4 font-bold text-sm text-stone-400 text-center' />
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -947,13 +952,13 @@ function Products({ products }: { products: Product[] }) {
                                             </td>
                                             <td>
                                                 <div class='flex gap-1 justify-center'>
-                                                    <span class='text-lg font-medium w-12 border border-stone-500 flex items-center justify-center bg-stone-200'>
+                                                    <span class='text-lg font-medium w-12 border border-stone-300 flex items-center justify-center'>
                                                         {cartProduct.quantity}
                                                     </span>
                                                     <div class='flex flex-col gap-1'>
                                                         <button
                                                             type='button'
-                                                            class='w-6 h-6 bg-stone-200 text-xl flex items-center justify-center border border-stone-500'
+                                                            class='w-6 h-6 text-xl flex items-center justify-center border border-stone-300'
                                                             onClick={async () => {
                                                                 await updateItem({
                                                                     productVariantId: Number(p.productID),
@@ -965,7 +970,7 @@ function Products({ products }: { products: Product[] }) {
                                                         </button>
                                                         <button
                                                             type='button'
-                                                            class='w-6 h-6 bg-stone-200 text-xl flex items-center justify-center border border-stone-500'
+                                                            class='w-6 h-6 text-xl flex items-center justify-center border border-stone-300'
                                                             onClick={async () => {
                                                                 await updateItem({
                                                                     productVariantId: Number(p.productID),
@@ -1004,32 +1009,20 @@ function Products({ products }: { products: Product[] }) {
     )
 }
 
-function JSONPreview({ label, data }: { label: string; data: unknown }) {
-    const id = useId()
-
-    const empty =
-        typeof data === 'undefined' ||
-        data === null ||
-        (typeof data === 'string' && data === '') ||
-        (Array.isArray(data) && data.length === 0) ||
-        Object.keys(data).length === 0
-
+function Breadcrumb() {
     return (
-        <div>
-            <input type='checkbox' id={id} class='hidden peer' />
-            <label
-                for={id}
-                class={`flex items-center justify-center uppercase border border-zinc-700 p-4 cursor-pointer select-none ${
-                    empty ? 'bg-zinc-300' : 'bg-green-600/40'
-                }`}
-            >
-                {label}
-            </label>
-            <div class='grid grid-rows-[0fr] peer-checked:grid-rows-[1fr] transition-all'>
-                <div class='overflow-x-auto overflow-y-hidden'>
-                    <pre>{JSON.stringify(data, null, 4)}</pre>
-                </div>
-            </div>
+        <div class='flex items-center gap-2'>
+            <a href='/carrinho' class='text-sm font-bold'>
+                Carrinho
+            </a>
+            <span class='text-sm'>{'>'}</span>
+            <a href='/frete' class='text-sm'>
+                Frete
+            </a>
+            <span class='text-sm'>{'>'}</span>
+            <a href='/pagamento' class='text-sm'>
+                Pagamento
+            </a>
         </div>
     )
 }

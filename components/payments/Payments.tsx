@@ -6,7 +6,7 @@ import { useEffect } from 'preact/hooks'
 import { invoke } from '../../runtime.ts'
 import { formatPrice } from '../../sdk/format.ts'
 import { useOffer } from '../../sdk/useOffer.ts'
-import { Total } from '../checkout/Foo.tsx'
+import { Total } from '../carrinho/carrinho.tsx'
 
 // https://github.com/denoland/fresh/discussions/432#discussioncomment-3182480
 import Cards from 'https://esm.sh/react-credit-cards-2@1.0.2?alias=react:preact/compat&external=preact'
@@ -374,7 +374,7 @@ function PaymentMethods() {
                                     <option value='2024'>2024</option>
                                     <option value='2025'>2025</option>
                                     <option value='2026'>2026</option>
-                                    <option value='2027'>2027</option>
+                                    <option value='2027'>2027</option>1
                                     <option value='2028'>2028</option>
                                     <option value='2029'>2029</option>
                                     <option value='2030'>2030</option>
