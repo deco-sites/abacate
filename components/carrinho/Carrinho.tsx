@@ -8,14 +8,13 @@ import type { Product } from 'apps/commerce/types.ts'
 import { useOffer } from '../../sdk/useOffer.ts'
 import { formatPrice } from '../../sdk/format.ts'
 import Icon from '../ui/Icon.tsx'
+import { useShipping } from 'apps/wake/hooks/useShipping.ts'
 
 const { cart, updateItem, addCoupon } = useCart()
+const { selectedShipping, selectShipping } = useShipping()
 
 const shippingLoading = signal(false)
 const shipping = signal<Awaited<ReturnType<typeof invoke.wake.actions.shippingSimulation>>>(null)
-const selectedShipping =
-    signal<NonNullable<Awaited<ReturnType<typeof invoke.wake.actions.shippingSimulation>>>[number]>(null)
-
 const checkoutCoupon = signal<Awaited<ReturnType<typeof invoke.wake.loaders.checkoutCoupon>>>(null)
 
 export default function () {
@@ -74,7 +73,7 @@ export default function () {
     if (loading.value) return null
 
     return (
-        <div class='p-4 flex flex-col gap-4 min-h-screen'>
+        <div class='p-4 flex flex-col gap-4 min-h-screen container mx-auto max-w-[1330px]'>
             <Breadcrumb />
 
             <div class='flex gap-4'>
@@ -88,7 +87,7 @@ export default function () {
 
             {products.value.length > 0 && (
                 <div class='flex items-start gap-6'>
-                    <div class='flex flex-col'>
+                    <div class='flex flex-col w-full'>
                         <div class='px-3 py-3 flex justify-between items-center bg-stone-200'>
                             <h2 class='text-sm font-bold text-stone-500'>ENVIO 01</h2>
                             <p class='text-sm'>
@@ -97,7 +96,7 @@ export default function () {
                         </div>
 
                         <Products products={products.value} />
-                        {shipping.value && <ShippingOptions />}
+                        <ShippingOptions />
                     </div>
                     <div class='p-4 border border-stone-300 flex flex-col gap-4 divider-y divider-stone-300'>
                         <Shipping />
@@ -139,28 +138,28 @@ export function formatShipping(
 
 function ShippingOptions() {
     return (
-        <div class='flex items-center border border-stone-300 px-3 py-2 ml-4 gap-4'>
-            <span class='text-sm font-bold text-stone-500 whitespace-nowrap'>OPÇÕES DE FRETE</span>
-            <select
-                name='shipping'
-                class='w-full px-4 py-2 text-sm text-black border border-stone-300 outline-0'
-                onChange={e => {
-                    const id = e.currentTarget.value
+        <div class='flex items-center border border-stone-300 px-3 py-2 ml-4 gap-4 h-14'>
+            {shipping.value && (
+                <>
+                    <span class='text-sm font-bold text-stone-500 whitespace-nowrap'>OPÇÕES DE FRETE</span>
+                    <select
+                        name='shipping'
+                        class='w-full px-4 py-2 text-sm text-black border border-stone-300 outline-0'
+                        onChange={e => selectShipping({ shippingQuoteId: e.currentTarget.value })}
+                    >
+                        <option disabled selected>
+                            Selecione
+                        </option>
+                        {shipping
+                            .value!.toSorted((a, b) => a!.value - b!.value)
+                            .map(i => (
+                                <option value={i!.shippingQuoteId!}>{formatShipping(i)}</option>
+                            ))}
+                    </select>
+                </>
+            )}
 
-                    selectedShipping.value = shipping.value!.find(i => i!.shippingQuoteId === id)!
-                }}
-            >
-                <option disabled selected>
-                    Selecione
-                </option>
-                {shipping
-                    .value!.toSorted((a, b) => a!.value - b!.value)
-                    .map(i => (
-                        <option value={i!.shippingQuoteId!}>{formatShipping(i)}</option>
-                    ))}
-            </select>
-
-            <div class='flex items-center gap-3'>
+            <div class='flex items-center gap-3 ml-auto'>
                 <span class='text-sm font-bold text-stone-500'>SUBTOTAL</span>
                 <span class='text-sm font-bold text-stone-950'>{formatPrice(cart.value.subtotal)}</span>
             </div>
@@ -919,7 +918,7 @@ function Products({ products }: { products: Product[] }) {
                             />
                             <div class='flex justify-between w-full'>
                                 <div class='flex flex-col'>
-                                    <div class='text-sm'>{seller}</div>
+                                    <div class='font-black uppercase'>{seller || 'ABACATE'}</div>
                                     <div class='text-sm'>{p.name}</div>
                                     <div class='flex flex-col gap-0.5 mt-5'>
                                         {p.additionalProperty?.map(i => (

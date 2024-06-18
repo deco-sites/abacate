@@ -13,9 +13,9 @@ asd@asdasda.sadas
 - [x] Preço (de e por)
 - [x] Sub total
 - [x] Deletar
-- [ ] Vendido e entregue por (seller)
+- [x] Vendido e entregue por (seller)
 - [x] Calcular frete
-- [ ] Código de desconto
+- [x] Código de desconto
 - [x] Total
 - [x] Sub Total
 - [x] Botão finalizar compra
@@ -36,28 +36,28 @@ asd@asdasda.sadas
 - [x] Telefone
 - [x] Botão
 - [x] Lista de produtos
-- [ ] Código de desconto
+- [x] Código de desconto
 - [ ] Embalagem para presente
 - [ ] Adicionar mensagem
 
 ## Fechamento (/Fechamento)
 
-- [ ] Seleção de forma de pagamento
-- [ ] Cartão de crédito
-- [ ] Número do cartão
-- [ ] Nome do titular(Como escrito no cartão)
-- [ ] Validade
-- [ ] Cód. de segurança
-- [ ] Salvar cartão para sua próxima compra
-- [ ] Parcelamento
-- [ ] PIX
-- [ ] Resumo do pedido
-- [ ] Lista de produtos
-- [ ] Código de desconto
-- [ ] Sub total
-- [ ] Valor do desconto
-- [ ] Valor do frete
-- [ ] Total
+- [x] Seleção de forma de pagamento
+- [x] Cartão de crédito
+- [x] Número do cartão
+- [x] Nome do titular(Como escrito no cartão)
+- [x] Validade
+- [x] Cód. de segurança
+- [x] Salvar cartão para sua próxima compra
+- [x] Parcelamento
+- [x] PIX
+- [x] Resumo do pedido
+- [x] Lista de produtos
+- [x] Código de desconto
+- [x] Sub total
+- [x] Valor do desconto
+- [x] Valor do frete
+- [x] Total
 
 ## Confirmação (/Confirmacao)
 

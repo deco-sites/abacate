@@ -5,21 +5,24 @@ import debounce from '../../sdk/debounce.ts'
 import useCEP from '../../sdk/useCEP.ts'
 import { useUser } from 'apps/wake/hooks/useUser.ts'
 import Icon from '../ui/Icon.tsx'
-import { Total, formatShipping } from '../carrinho/carrinho.tsx'
+import { Total, formatShipping } from '../carrinho/Carrinho.tsx'
 import { useCart } from 'apps/wake/hooks/useCart.ts'
 import type { Product } from 'apps/commerce/types.ts'
 import Image from 'apps/website/components/Image.tsx'
 import { useOffer } from '../../sdk/useOffer.ts'
 import { formatPrice } from '../../sdk/format.ts'
+import { useAddress } from 'apps/wake/hooks/useAddress.ts'
+import { useShipping } from 'apps/wake/hooks/useShipping.ts'
 
 const address = signal<Awaited<ReturnType<typeof invoke.wake.loaders.userAddresses>>>(null)
 const shipping = signal<Awaited<ReturnType<typeof invoke.wake.actions.shippingSimulation>>>(null)
-const selectedAddress = signal<Awaited<ReturnType<typeof invoke.wake.loaders.selectedAddress>>>(null)
-const selectedShipping = signal<Awaited<ReturnType<typeof invoke.wake.loaders.selectedShipping>>>(null)
+
 const products = signal([] as Product[])
 
 const { user } = useUser()
 const { cart, updateItem, addCoupon, removeCoupon } = useCart()
+const { selectedAddress, selectAddress } = useAddress()
+const { selectedShipping, selectShipping } = useShipping()
 
 export default function () {
     const loading = useSignal(true)
@@ -28,8 +31,6 @@ export default function () {
     useEffect(() => {
         ;(async () => {
             address.value = await invoke.wake.loaders.userAddresses()
-            selectedAddress.value = await invoke.wake.loaders.selectedAddress()
-            selectedShipping.value = await invoke.wake.loaders.selectedShipping()
             shipping.value = await invoke.wake.actions.shippingSimulation({
                 simulateCartItems: true,
                 useSelectedAddress: true,
@@ -38,6 +39,8 @@ export default function () {
             loading.value = false
         })()
     }, [])
+
+    console.log(selectedShipping.value)
 
     useSignalEffect(() => {
         ;(async () => {
@@ -124,7 +127,7 @@ function Summary() {
                                     class='border border-stone-300'
                                 />
                                 <div class='flex flex-col gap-1 ml-5 w-1/3'>
-                                    <h3 class='font-black uppercase text-xs sm:text-sm'>{seller}</h3>
+                                    <div class='font-black uppercase'>{seller || 'ABACATE'}</div>
                                     <h4 class='text-xs'>{i.name}</h4>
                                     <div class='flex flex-col gap-1'>
                                         {i.additionalProperty?.map(i => (
@@ -218,13 +221,16 @@ function Summary() {
 
                 <Total shippingPrice={selectedShipping.value?.value} />
             </div>
-            <a
-                href='/pagamento'
+            <button
+                type='button'
+                onClick={() => {
+                    location.href = '/pagamento'
+                }}
                 disabled={!selectedShipping.value}
                 class='bg-yellow-800 text-center text-white font-bold text-sm py-2.5 w-full transition-all ease-in-out duration-300 hover:brightness-90 mt-2 disabled:cursor-not-allowed disabled:opacity-50'
             >
                 IR PARA PAGAMENTO
-            </a>
+            </button>
         </>
     )
 }
@@ -249,9 +255,7 @@ function ShippingOptions() {
                     <select
                         name='shipping'
                         class='w-full px-4 py-2 text-sm text-black border border-stone-500 outline-0'
-                        onChange={async e => {
-                            await invoke.wake.actions.selectShipping({ shippingQuoteId: e.currentTarget.value })
-                        }}
+                        onChange={e => selectShipping({ shippingQuoteId: e.currentTarget.value })}
                     >
                         <option disabled selected={!selectedShipping.value}>
                             Selecione
@@ -292,7 +296,7 @@ function ShippingOptions() {
                                     class='border border-stone-300'
                                 />
                                 <div class='flex flex-col gap-1 ml-5'>
-                                    <h3 class='font-black uppercase text-xs sm:text-sm'>{seller}</h3>
+                                    <h3 class='font-black uppercase text-xs sm:text-sm'>{seller || 'ABACATE'}</h3>
                                     <h4 class='text-xs'>{i.name}</h4>
                                     <div class='flex flex-col gap-1'>
                                         {i.additionalProperty?.map(i => (
@@ -332,30 +336,30 @@ function ShippingAddress() {
             <h2 class='w-full px-3 py-2 font-bold text-lg bg-stone-200'>ENDEREÇO DE ENVIO</h2>
             <div class='px-3 py-5 flex flex-col items-start gap-4'>
                 <div class='flex flex-wrap gap-4'>
-                    {address.value.map(a => (
-                        <button
-                            type='button'
-                            class='border border-stone-800 p-3 max-w-72 flex flex-col hover:bg-stone-300 transition-colors relative'
-                            onClick={async () => {
-                                await invoke.wake.actions.selectAddress({ addressId: a!.id! })
-                            }}
-                        >
-                            {selectedAddress.value?.id === a?.id && (
-                                <span class='absolute top-0 right-0 bg-black flex items-center p-1'>
-                                    <Icon id='AddressCheck' size={18} strokeWidth={1} />
-                                </span>
-                            )}
+                    {address.value.map(a => {
+                        return (
+                            <button
+                                type='button'
+                                class='border border-stone-800 p-3 max-w-72 flex flex-col hover:bg-stone-300 transition-colors relative'
+                                onClick={() => selectAddress({ addressId: a!.id! })}
+                            >
+                                {selectedAddress.value?.id === a?.id && (
+                                    <span class='absolute top-0 right-0 bg-black flex items-center p-1'>
+                                        <Icon id='AddressCheck' size={18} strokeWidth={1} />
+                                    </span>
+                                )}
 
-                            <span class='text-sm'>{a!.name}</span>
-                            <span class='text-sm'>
-                                {a!.street ?? ''}, {a!.addressNumber ?? ''}
-                            </span>
-                            <span class='text-sm'>
-                                {a!.city ?? ''}, {a!.neighborhood ?? ''}, {a!.state ?? ''}, {a!.cep ?? ''},{' '}
-                                {a!.country ?? ''} - Tel: {a!.phone ?? ''}
-                            </span>
-                        </button>
-                    ))}
+                                <span class='text-sm'>{a!.name}</span>
+                                <span class='text-sm'>
+                                    {a!.street ?? ''}, {a!.addressNumber ?? ''}
+                                </span>
+                                <span class='text-sm'>
+                                    {a!.city ?? ''}, {a!.neighborhood ?? ''}, {a!.state ?? ''}, {a!.cep ?? ''},{' '}
+                                    {a!.country ?? ''} - Tel: {a!.phone ?? ''}
+                                </span>
+                            </button>
+                        )
+                    })}
                 </div>
 
                 <input type='checkbox' id='add-new-address' class='hidden peer' />

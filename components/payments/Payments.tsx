@@ -6,7 +6,7 @@ import { useEffect } from 'preact/hooks'
 import { invoke } from '../../runtime.ts'
 import { formatPrice } from '../../sdk/format.ts'
 import { useOffer } from '../../sdk/useOffer.ts'
-import { Total } from '../carrinho/carrinho.tsx'
+import { Total } from '../carrinho/Carrinho.tsx'
 
 // https://github.com/denoland/fresh/discussions/432#discussioncomment-3182480
 import Cards from 'https://esm.sh/react-credit-cards-2@1.0.2?alias=react:preact/compat&external=preact'
@@ -15,6 +15,7 @@ const selectedShipping = signal<Awaited<ReturnType<typeof invoke.wake.loaders.se
 const paymentMethods = signal<Awaited<ReturnType<typeof invoke.wake.loaders.paymentMethods>>>([])
 const paymentMethodsPrices = signal<Awaited<ReturnType<typeof invoke.wake.loaders.calculatePrices>>>(null)
 const products = signal([] as Product[])
+const paymentIsSet = signal(false)
 
 const { cart, updateItem, addCoupon, removeCoupon } = useCart()
 
@@ -224,13 +225,16 @@ function Summary() {
 
                 <Total shippingPrice={selectedShipping.value?.value} />
             </div>
-            <a
-                href='/pagamento'
-                disabled={!selectedShipping.value}
+            <button
+                type='button'
+                onClick={() => {
+                    location.href = '/confirmacao'
+                }}
+                disabled={!paymentIsSet.value}
                 class='bg-yellow-800 text-center text-white font-bold text-sm py-2.5 w-full transition-all ease-in-out duration-300 hover:brightness-90 mt-2 disabled:cursor-not-allowed disabled:opacity-50'
             >
-                IR PARA PAGAMENTO
-            </a>
+                FINALIZAR COMPRA
+            </button>
         </>
     )
 }
@@ -261,6 +265,7 @@ function PaymentMethods() {
                                 class='hidden peer'
                                 onInput={async () => {
                                     await invoke.wake.actions.selectPayment({ paymentMethodId: i.id! })
+                                    paymentIsSet.value = true
                                 }}
                             />
                             <div class='size-4 border border-stone-500 rounded-full flex justify-center items-center peer-checked:bg-black peer-checked:border-black'>
@@ -374,8 +379,7 @@ function PaymentMethods() {
                                     <option value='2024'>2024</option>
                                     <option value='2025'>2025</option>
                                     <option value='2026'>2026</option>
-                                    <option value='2027'>2027</option>1
-                                    <option value='2028'>2028</option>
+                                    <option value='2027'>2027</option>1<option value='2028'>2028</option>
                                     <option value='2029'>2029</option>
                                     <option value='2030'>2030</option>
                                     <option value='2031'>2031</option>
