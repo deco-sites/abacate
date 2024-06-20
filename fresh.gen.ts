@@ -10,6 +10,7 @@ import * as $AddToCartButton_vnda from "./islands/AddToCartButton/vnda.tsx";
 import * as $AddToCartButton_vtex from "./islands/AddToCartButton/vtex.tsx";
 import * as $AddToCartButton_wake from "./islands/AddToCartButton/wake.tsx";
 import * as $Carrinho from "./islands/Carrinho.tsx";
+import * as $Confirmacao from "./islands/Confirmacao.tsx";
 import * as $Frete from "./islands/Frete.tsx";
 import * as $Header_Buttons from "./islands/Header/Buttons.tsx";
 import * as $Header_Cart_linx from "./islands/Header/Cart/linx.tsx";
@@ -43,6 +44,7 @@ const manifest = {
     "./islands/AddToCartButton/vtex.tsx": $AddToCartButton_vtex,
     "./islands/AddToCartButton/wake.tsx": $AddToCartButton_wake,
     "./islands/Carrinho.tsx": $Carrinho,
+    "./islands/Confirmacao.tsx": $Confirmacao,
     "./islands/Frete.tsx": $Frete,
     "./islands/Header/Buttons.tsx": $Header_Buttons,
     "./islands/Header/Cart/linx.tsx": $Header_Cart_linx,

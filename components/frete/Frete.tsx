@@ -1,5 +1,5 @@
 import { useEffect } from 'preact/hooks'
-import { useSignal, signal, useSignalEffect } from '@preact/signals'
+import { useSignal, signal, useSignalEffect, computed } from '@preact/signals'
 import { invoke } from '../../runtime.ts'
 import debounce from '../../sdk/debounce.ts'
 import useCEP from '../../sdk/useCEP.ts'
@@ -11,23 +11,22 @@ import type { Product } from 'apps/commerce/types.ts'
 import Image from 'apps/website/components/Image.tsx'
 import { useOffer } from '../../sdk/useOffer.ts'
 import { formatPrice } from '../../sdk/format.ts'
-import { useAddress } from 'apps/wake/hooks/useAddress.ts'
-import { useShipping } from 'apps/wake/hooks/useShipping.ts'
+import getFullProducts from '../../sdk/getFullProducts.ts'
+import nonNullable from '../../sdk/nonNullable.ts'
 
-const address = signal<Awaited<ReturnType<typeof invoke.wake.loaders.userAddresses>>>(null)
+const address = signal<Awaited<ReturnType<typeof invoke.wake.loaders.userAddresses>>>([])
 const shipping = signal<Awaited<ReturnType<typeof invoke.wake.actions.shippingSimulation>>>(null)
 
 const products = signal([] as Product[])
 
+const cartProducts = computed(() => (cart.value?.products || []).filter(nonNullable))
+
 const { user } = useUser()
 const { cart, updateItem, addCoupon, removeCoupon } = useCart()
-const { selectedAddress, selectAddress } = useAddress()
-const { selectedShipping, selectShipping } = useShipping()
 
 export default function () {
     const loading = useSignal(true)
 
-    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
         ;(async () => {
             address.value = await invoke.wake.loaders.userAddresses()
@@ -40,35 +39,9 @@ export default function () {
         })()
     }, [])
 
-    console.log(selectedShipping.value)
-
     useSignalEffect(() => {
         ;(async () => {
-            const cartProducts = cart.value.products || []
-
-            if (!cartProducts.length) {
-                products.value = []
-                return
-            }
-
-            const p =
-                (await invoke.wake.loaders.productList({
-                    first: 10,
-                    sortDirection: 'ASC',
-                    sortKey: 'NAME',
-                    filters: { sku: cartProducts.map(i => i!.sku!) },
-                })) || []
-
-            const cartSkus = cartProducts.map(i => i!.sku)
-
-            products.value = p
-                .filter(i => cartSkus.includes(i!.sku))
-                .sort((a, b) => {
-                    const aIndex = cartProducts.findIndex(i => i!.sku === a.sku)
-                    const bIndex = cartProducts.findIndex(i => i!.sku === b.sku)
-
-                    return aIndex - bIndex
-                })
+            products.value = await getFullProducts()
 
             console.log(products.value)
         })()
@@ -101,18 +74,14 @@ function Summary() {
             <div class='px-4 py-3 flex flex-col gap-2 w-full border border-stone-400'>
                 <div class='w-full flex justify-between items-center bg-stone-200 px-3 py-2'>
                     <h2 class='font-bold text-lg'>OPÇÕES DE FRETE</h2>
-                    <span class='text-sm'>
-                        {cart.value.products?.reduce((acc, cur) => acc + cur!.quantity, 0)} itens
-                    </span>
+                    <span class='text-sm'>{cartProducts.value.reduce((acc, cur) => acc + cur.quantity, 0)} itens</span>
                 </div>
 
                 <div class='flex flex-col gap-4'>
                     {products.value.map(i => {
                         const { seller, listPrice = 0 } = useOffer(i.offers)
 
-                        const cartProduct = cart.value.products!.find(
-                            ii => ii?.productVariantId === Number(i?.productID),
-                        )
+                        const cartProduct = cartProducts.value.find(ii => ii?.productVariantId === Number(i?.productID))
                         if (!cartProduct) return null
 
                         const price = cartProduct.price
@@ -219,14 +188,14 @@ function Summary() {
                     </div>
                 </div>
 
-                <Total shippingPrice={selectedShipping.value?.value} />
+                <Total shippingPrice={cart.value?.selectedShipping?.value} />
             </div>
             <button
                 type='button'
                 onClick={() => {
                     location.href = '/pagamento'
                 }}
-                disabled={!selectedShipping.value}
+                disabled={!cart.value?.selectedShipping}
                 class='bg-yellow-800 text-center text-white font-bold text-sm py-2.5 w-full transition-all ease-in-out duration-300 hover:brightness-90 mt-2 disabled:cursor-not-allowed disabled:opacity-50'
             >
                 IR PARA PAGAMENTO
@@ -246,26 +215,31 @@ function ShippingOptions() {
                 <div class='px-3 py-3 flex justify-between items-center bg-stone-200'>
                     <h2 class='text-sm font-bold text-stone-500'>ENVIO 01</h2>
                     <p class='text-sm'>
-                        Vendido e entregue por: <span class='uppercase font-black ml-2'>SHOP2GETHER</span>
+                        Vendido e entregue por: <span class='uppercase font-black ml-2'>ABACATE</span>
                     </p>
                 </div>
 
                 <div class='px-3 py-5 flex items-center gap-4'>
                     <span class='text-sm font-bold whitespace-nowrap'>OPÇÕES DE FRETE</span>
+
                     <select
                         name='shipping'
                         class='w-full px-4 py-2 text-sm text-black border border-stone-500 outline-0'
-                        onChange={e => selectShipping({ shippingQuoteId: e.currentTarget.value })}
+                        onChange={async e => {
+                            await invoke.wake.actions.selectShipping({ shippingQuoteId: e.currentTarget.value })
+                            await invoke.wake.loaders.cart()
+                        }}
                     >
-                        <option disabled selected={!selectedShipping.value}>
+                        <option disabled selected={!cart.value?.selectedShipping?.value}>
                             Selecione
                         </option>
-                        {shipping
-                            .value!.toSorted((a, b) => a!.value - b!.value)
+                        {(shipping.value ?? [])
+                            .filter(nonNullable)
+                            .toSorted((a, b) => a.value - b.value)
                             .map(i => (
                                 <option
-                                    value={i!.shippingQuoteId!}
-                                    selected={selectedShipping.value?.shippingQuoteId === i?.shippingQuoteId}
+                                    value={i.shippingQuoteId}
+                                    selected={cart.value?.selectedShipping?.shippingQuoteId === i.shippingQuoteId}
                                 >
                                     {formatShipping(i)}
                                 </option>
@@ -279,9 +253,7 @@ function ShippingOptions() {
                     {products.value.map(i => {
                         const { seller, listPrice = 0 } = useOffer(i.offers)
 
-                        const cartProduct = cart.value.products!.find(
-                            ii => ii?.productVariantId === Number(i?.productID),
-                        )
+                        const cartProduct = cartProducts.value.find(ii => ii.productVariantId === Number(i.productID))
                         if (!cartProduct) return null
 
                         const price = cartProduct.price
@@ -337,25 +309,31 @@ function ShippingAddress() {
             <div class='px-3 py-5 flex flex-col items-start gap-4'>
                 <div class='flex flex-wrap gap-4'>
                     {address.value.map(a => {
+                        if (!a.id) throw new Error('a.id is nullable')
+                        const id = a.id
+
                         return (
                             <button
                                 type='button'
                                 class='border border-stone-800 p-3 max-w-72 flex flex-col hover:bg-stone-300 transition-colors relative'
-                                onClick={() => selectAddress({ addressId: a!.id! })}
+                                onClick={async () => {
+                                    await invoke.wake.actions.selectAddress({ addressId: id })
+                                    await invoke.wake.loaders.cart()
+                                }}
                             >
-                                {selectedAddress.value?.id === a?.id && (
+                                {cart.value?.selectedAddress?.id === id && (
                                     <span class='absolute top-0 right-0 bg-black flex items-center p-1'>
                                         <Icon id='AddressCheck' size={18} strokeWidth={1} />
                                     </span>
                                 )}
 
-                                <span class='text-sm'>{a!.name}</span>
+                                <span class='text-sm'>{a.name}</span>
                                 <span class='text-sm'>
-                                    {a!.street ?? ''}, {a!.addressNumber ?? ''}
+                                    {a.street ?? ''}, {a.addressNumber ?? ''}
                                 </span>
                                 <span class='text-sm'>
-                                    {a!.city ?? ''}, {a!.neighborhood ?? ''}, {a!.state ?? ''}, {a!.cep ?? ''},{' '}
-                                    {a!.country ?? ''} - Tel: {a!.phone ?? ''}
+                                    {a.city ?? ''}, {a.neighborhood ?? ''}, {a.state ?? ''}, {a.cep ?? ''},{' '}
+                                    {a.country ?? ''} - Tel: {a.phone ?? ''}
                                 </span>
                             </button>
                         )
@@ -418,7 +396,7 @@ function ShippingAddress() {
                         onInput={e => {
                             const v = e.currentTarget.value
                                 .replace(/\D/g, '')
-                                .replace(/^(\d{0,5})(\d{0,3})(.*)$/, (all, $1, $2) => {
+                                .replace(/^(\d{0,5})(\d{0,3})(.*)$/, (_, $1, $2) => {
                                     let s = ''
 
                                     if ($1) s += $1
@@ -535,7 +513,7 @@ function ShippingAddress() {
                         onInput={e => {
                             e.currentTarget.value = e.currentTarget.value
                                 .replace(/\D/g, '')
-                                .replace(/^(\d?)(\d?)(\d{0,5})(\d{0,4})(.*)$/, (all, $1, $2, $3, $4) => {
+                                .replace(/^(\d?)(\d?)(\d{0,5})(\d{0,4})(.*)$/, (_, $1, $2, $3, $4) => {
                                     let s = ''
 
                                     if ($1) s += `(${$1}${$2}`

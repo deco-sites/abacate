@@ -1,74 +1,53 @@
-import { signal, useSignal, useSignalEffect } from '@preact/signals'
+import { computed, signal, useSignal, useSignalEffect } from '@preact/signals'
 import type { Product } from 'apps/commerce/types.ts'
 import { useCart } from 'apps/wake/hooks/useCart.ts'
 import Image from 'apps/website/components/Image.tsx'
-import { useEffect } from 'preact/hooks'
 import { invoke } from '../../runtime.ts'
 import { formatPrice } from '../../sdk/format.ts'
 import { useOffer } from '../../sdk/useOffer.ts'
 import { Total } from '../carrinho/Carrinho.tsx'
 
 // https://github.com/denoland/fresh/discussions/432#discussioncomment-3182480
+import type { AppContext } from 'apps/wake/mod.ts'
 import Cards from 'https://esm.sh/react-credit-cards-2@1.0.2?alias=react:preact/compat&external=preact'
+import getFullProducts from '../../sdk/getFullProducts.ts'
+import nonNullable from '../../sdk/nonNullable.ts'
 
-const selectedShipping = signal<Awaited<ReturnType<typeof invoke.wake.loaders.selectedShipping>>>(null)
 const paymentMethods = signal<Awaited<ReturnType<typeof invoke.wake.loaders.paymentMethods>>>([])
 const paymentMethodsPrices = signal<Awaited<ReturnType<typeof invoke.wake.loaders.calculatePrices>>>(null)
 const products = signal([] as Product[])
 const paymentIsSet = signal(false)
 
+const number = signal('')
+const month = signal('')
+const year = signal('')
+const expiry = signal('')
+const cvc = signal('')
+const name = signal('')
+
 const { cart, updateItem, addCoupon, removeCoupon } = useCart()
 
+const cartProducts = computed(() => (cart.value?.products || []).filter(nonNullable))
+
 export default function () {
+    if (!cart.value.products) return null
+
     const loading = useSignal(true)
-
-    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-    useEffect(() => {
-        ;(async () => {
-            selectedShipping.value = await invoke.wake.loaders.selectedShipping()
-            paymentMethods.value = await invoke.wake.loaders.paymentMethods()
-            paymentMethodsPrices.value = await invoke.wake.loaders.calculatePrices({
-                products:
-                    cart.value.products?.map(i => ({
-                        productVariantId: i!.productVariantId,
-                        quantity: i!.quantity,
-                    })) || [],
-            })
-
-            console.log(paymentMethodsPrices.value)
-
-            loading.value = false
-        })()
-    }, [])
 
     useSignalEffect(() => {
         ;(async () => {
-            const cartProducts = cart.value.products || []
+            products.value = await getFullProducts()
 
-            if (!cartProducts.length) {
-                products.value = []
-                return
-            }
+            paymentMethods.value = await invoke.wake.loaders.paymentMethods()
+            paymentMethodsPrices.value = await invoke.wake.loaders.calculatePrices({
+                products:
+                    cartProducts.value.map(i => ({
+                        productVariantId: i.productVariantId,
+                        quantity: i.quantity,
+                    })) || [],
+            })
 
-            const p =
-                (await invoke.wake.loaders.productList({
-                    first: 10,
-                    sortDirection: 'ASC',
-                    sortKey: 'NAME',
-                    filters: { sku: cartProducts.map(i => i!.sku!) },
-                })) || []
-
-            const cartSkus = cartProducts.map(i => i!.sku)
-
-            products.value = p
-                .filter(i => cartSkus.includes(i!.sku))
-                .sort((a, b) => {
-                    const aIndex = cartProducts.findIndex(i => i!.sku === a.sku)
-                    const bIndex = cartProducts.findIndex(i => i!.sku === b.sku)
-
-                    return aIndex - bIndex
-                })
-
+            loading.value = false
             console.log(products.value)
         })()
     })
@@ -105,18 +84,14 @@ function Summary() {
             <div class='px-4 py-3 flex flex-col gap-2 w-full border border-stone-400'>
                 <div class='w-full flex justify-between items-center bg-stone-200 px-3 py-2'>
                     <h2 class='font-bold text-lg'>OPÇÕES DE FRETE</h2>
-                    <span class='text-sm'>
-                        {cart.value.products?.reduce((acc, cur) => acc + cur!.quantity, 0)} itens
-                    </span>
+                    <span class='text-sm'>{cartProducts.value.reduce((acc, cur) => acc + cur.quantity, 0)} itens</span>
                 </div>
 
                 <div class='flex flex-col gap-4'>
                     {products.value.map(i => {
                         const { seller, listPrice = 0 } = useOffer(i.offers)
 
-                        const cartProduct = cart.value.products!.find(
-                            ii => ii?.productVariantId === Number(i?.productID),
-                        )
+                        const cartProduct = cartProducts.value.find(ii => ii.productVariantId === Number(i.productID))
                         if (!cartProduct) return null
 
                         const price = cartProduct.price
@@ -131,7 +106,7 @@ function Summary() {
                                     class='border border-stone-300'
                                 />
                                 <div class='flex flex-col gap-1 ml-5 w-1/3'>
-                                    <h3 class='font-black uppercase text-xs sm:text-sm'>{seller}</h3>
+                                    <h3 class='font-black uppercase text-xs sm:text-sm'>{seller || 'ABACATE'}</h3>
                                     <h4 class='text-xs'>{i.name}</h4>
                                     <div class='flex flex-col gap-1'>
                                         {i.additionalProperty?.map(i => (
@@ -223,12 +198,34 @@ function Summary() {
                     </div>
                 </div>
 
-                <Total shippingPrice={selectedShipping.value?.value} />
+                <Total shippingPrice={cart.value?.selectedShipping?.value} />
             </div>
             <button
                 type='button'
-                onClick={() => {
-                    location.href = '/confirmacao'
+                onClick={async () => {
+                    console.log(cart.value?.selectedPaymentMethod)
+
+                    await invoke.wake.actions.completeCheckout({ paymentData: {} })
+
+                    // const a = ''
+
+                    // if (a === 'pix') {
+                    //     await invoke.wake.actions.completeCheckout({ paymentData: {} })
+                    // } else {
+                    //     await invoke.wake.actions.completeCheckout({
+                    //         paymentData: {
+                    //             number: number.value,
+                    //             name: name.value,
+                    //             month: month.value,
+                    //             year: year.value,
+                    //             cvc: cvc.value,
+                    //             expiry: `${month.value}/${year.value}`,
+                    //             cpf: user.value?.cpf!,
+                    //         },
+                    //     })
+                    // }
+
+                    // location.href = '/confirmacao'
                 }}
                 disabled={!paymentIsSet.value}
                 class='bg-yellow-800 text-center text-white font-bold text-sm py-2.5 w-full transition-all ease-in-out duration-300 hover:brightness-90 mt-2 disabled:cursor-not-allowed disabled:opacity-50'
@@ -240,12 +237,6 @@ function Summary() {
 }
 
 function PaymentMethods() {
-    const number = useSignal('')
-    const month = useSignal('')
-    const year = useSignal('')
-    const expiry = useSignal('')
-    const cvc = useSignal('')
-    const name = useSignal('')
     const focused = useSignal<'name' | 'number' | 'expiry' | 'cvc' | ''>('')
 
     return (
@@ -256,24 +247,29 @@ function PaymentMethods() {
 
             <div class='px-4 py-3 flex flex-col'>
                 <div class='px-4 py-3 flex flex-col gap-1.5 peer'>
-                    {paymentMethods.value.map(i => (
-                        <label class='flex items-center gap-1 text-sm cursor-pointer'>
-                            <input
-                                type='radio'
-                                name='payment'
-                                id={i.name ?? ''}
-                                class='hidden peer'
-                                onInput={async () => {
-                                    await invoke.wake.actions.selectPayment({ paymentMethodId: i.id! })
-                                    paymentIsSet.value = true
-                                }}
-                            />
-                            <div class='size-4 border border-stone-500 rounded-full flex justify-center items-center peer-checked:bg-black peer-checked:border-black'>
-                                <div class='size-1.5 bg-stone-100 rounded-full' />
-                            </div>
-                            {i.name}
-                        </label>
-                    ))}
+                    {paymentMethods.value.map(i => {
+                        if (!i.id) throw new Error('Payment method Id is nullable')
+                        const id = i.id
+
+                        return (
+                            <label class='flex items-center gap-1 text-sm cursor-pointer'>
+                                <input
+                                    type='radio'
+                                    name='payment'
+                                    id={i.name ?? ''}
+                                    class='hidden peer'
+                                    onInput={async () => {
+                                        await invoke.wake.actions.selectPayment({ paymentMethodId: id })
+                                        paymentIsSet.value = true
+                                    }}
+                                />
+                                <div class='size-4 border border-stone-500 rounded-full flex justify-center items-center peer-checked:bg-black peer-checked:border-black'>
+                                    <div class='size-1.5 bg-stone-100 rounded-full' />
+                                </div>
+                                {i.name}
+                            </label>
+                        )
+                    })}
                 </div>
 
                 <div class='hidden flex-col gap-6 peer-has-[input#Cartão:checked]:flex'>
@@ -294,19 +290,16 @@ function PaymentMethods() {
                                 onInput={(e: { currentTarget: { value: string } }) => {
                                     e.currentTarget.value = e.currentTarget.value
                                         .replace(/\D/g, '')
-                                        .replace(
-                                            /^(\d{0,4})(\d{0,4})(\d{0,4})(\d{0,4})(.*)$/,
-                                            (all, $1, $2, $3, $4) => {
-                                                let s = ''
+                                        .replace(/^(\d{0,4})(\d{0,4})(\d{0,4})(\d{0,4})(.*)$/, (_, $1, $2, $3, $4) => {
+                                            let s = ''
 
-                                                if ($1) s += $1
-                                                if ($2) s += ` ${$2}`
-                                                if ($3) s += ` ${$3}`
-                                                if ($4) s += ` ${$4}`
+                                            if ($1) s += $1
+                                            if ($2) s += ` ${$2}`
+                                            if ($3) s += ` ${$3}`
+                                            if ($4) s += ` ${$4}`
 
-                                                return s
-                                            },
-                                        )
+                                            return s
+                                        })
 
                                     number.value = e.currentTarget.value
                                 }}
@@ -421,11 +414,12 @@ function PaymentMethods() {
                         <div class='flex flex-col gap-1 w-full'>
                             <span class='font-medium text-sm'>Parcelamento</span>
                             <div class='flex gap-1 items-center'>
-                                <select class='p-2 border border-stone-400 w-full h-11 text-sm' onChange={e => {}}>
+                                <select class='p-2 border border-stone-400 w-full h-11 text-sm'>
                                     {paymentMethodsPrices.value?.installmentPlans
                                         ?.find(i => i?.displayName?.startsWith('Cartão'))
-                                        ?.installments?.map(i => (
-                                            <option>{`${i?.number === 1 ? 'À vista' : `${i?.number} parcelas`} ${formatPrice(i!.value)} ${i?.fees ? 'com' : 'sem'} juros`}</option>
+                                        ?.installments?.filter(nonNullable)
+                                        .map(i => (
+                                            <option>{`${i.number === 1 ? 'À vista' : `${i.number} parcelas`} ${formatPrice(i.value)} ${i.fees ? 'com' : 'sem'} juros`}</option>
                                         ))}
                                 </select>
                             </div>
@@ -453,4 +447,14 @@ function Breadcrumb() {
             </a>
         </div>
     )
+}
+
+export async function loader(props: object, req: Request, ctx: AppContext) {
+    const isLogged = !!(await ctx.invoke.wake.loaders.user({}, { signal: req.signal }))
+
+    if (!isLogged) {
+        // return redirect('/login')
+    }
+
+    return { ...props }
 }

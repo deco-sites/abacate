@@ -2,8 +2,6 @@ asd@asdasda.sadas
 
 1bb4c27d-3fc7-48b4-a985-7199f31991bc
 
-
-
 ## Carrinho (/carrinho)
 
 - [x] Lista de produtos
@@ -67,4 +65,3 @@ asd@asdasda.sadas
 - [ ] Endereço de entrega
 - [ ] Lista de produtos comprados
 - [ ] Imprimir página
-

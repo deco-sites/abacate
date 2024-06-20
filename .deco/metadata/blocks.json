@@ -312,5 +312,11 @@
     "path": "/pagamento",
     "blockType": "pages",
     "__resolveType": "website/pages/Page.tsx"
+  },
+  "/.deco/blocks/pages-Confirma%25C3%25A7%25C3%25A3o-402650.json": {
+    "name": "Confirmação",
+    "path": "/confirmacao",
+    "blockType": "pages",
+    "__resolveType": "website/pages/Page.tsx"
   }
 }

@@ -8,10 +8,10 @@ import type { Product } from 'apps/commerce/types.ts'
 import { useOffer } from '../../sdk/useOffer.ts'
 import { formatPrice } from '../../sdk/format.ts'
 import Icon from '../ui/Icon.tsx'
-import { useShipping } from 'apps/wake/hooks/useShipping.ts'
+import nonNullable from '../../sdk/nonNullable.ts'
+import getFullProducts from '../../sdk/getFullProducts.ts'
 
 const { cart, updateItem, addCoupon } = useCart()
-const { selectedShipping, selectShipping } = useShipping()
 
 const shippingLoading = signal(false)
 const shipping = signal<Awaited<ReturnType<typeof invoke.wake.actions.shippingSimulation>>>(null)
@@ -25,37 +25,12 @@ export default function () {
 
     useSignalEffect(() => {
         ;(async () => {
-            const cartProducts = cart.value.products || []
-
-            if (!cartProducts.length) {
-                products.value = []
-                return
-            }
-
-            const p =
-                (await invoke.wake.loaders.productList({
-                    first: 10,
-                    sortDirection: 'ASC',
-                    sortKey: 'NAME',
-                    filters: { sku: cartProducts.map(i => i!.sku!) },
-                })) || []
-
-            const cartSkus = cartProducts.map(i => i!.sku)
-
-            products.value = p
-                .filter(i => cartSkus.includes(i!.sku))
-                .sort((a, b) => {
-                    const aIndex = cartProducts.findIndex(i => i!.sku === a.sku)
-                    const bIndex = cartProducts.findIndex(i => i!.sku === b.sku)
-
-                    return aIndex - bIndex
-                })
+            products.value = await getFullProducts()
 
             console.log(products.value)
         })()
     })
 
-    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
         ;(async () => {
             user.value = await invoke.wake.loaders.user()
@@ -91,7 +66,7 @@ export default function () {
                         <div class='px-3 py-3 flex justify-between items-center bg-stone-200'>
                             <h2 class='text-sm font-bold text-stone-500'>ENVIO 01</h2>
                             <p class='text-sm'>
-                                Vendido e entregue por: <span class='uppercase font-black ml-2'>SHOP2GETHER</span>
+                                Vendido e entregue por: <span class='uppercase font-black ml-2'>ABACATE</span>
                             </p>
                         </div>
 
@@ -103,7 +78,7 @@ export default function () {
                         <div class='w-full h-px bg-stone-400 my-2' />
                         <Coupon />
                         <div class='w-full h-px bg-stone-400 my-2' />
-                        <Total shippingPrice={selectedShipping.value?.value} />
+                        <Total shippingPrice={cart.value?.selectedShipping?.value} />
                         <a
                             href='/frete'
                             class='bg-yellow-800 text-center text-white font-bold text-sm py-2.5 w-full transition-all ease-in-out duration-300 hover:brightness-90 mt-2 disabled:cursor-not-allowed disabled:opacity-50'
@@ -145,15 +120,16 @@ function ShippingOptions() {
                     <select
                         name='shipping'
                         class='w-full px-4 py-2 text-sm text-black border border-stone-300 outline-0'
-                        onChange={e => selectShipping({ shippingQuoteId: e.currentTarget.value })}
+                        onChange={e => invoke.wake.actions.selectShipping({ shippingQuoteId: e.currentTarget.value })}
                     >
                         <option disabled selected>
                             Selecione
                         </option>
-                        {shipping
-                            .value!.toSorted((a, b) => a!.value - b!.value)
+                        {shipping.value
+                            .filter(nonNullable)
+                            .toSorted((a, b) => a.value - b.value)
                             .map(i => (
-                                <option value={i!.shippingQuoteId!}>{formatShipping(i)}</option>
+                                <option value={i.shippingQuoteId}>{formatShipping(i)}</option>
                             ))}
                     </select>
                 </>
@@ -192,7 +168,7 @@ function Shipping() {
                 onInput={e => {
                     const v = e.currentTarget.value
                         .replace(/\D/g, '')
-                        .replace(/^(\d{0,5})(\d{0,3})(.*)$/, (all, $1, $2) => {
+                        .replace(/^(\d{0,5})(\d{0,3})(.*)$/, (_, $1, $2) => {
                             let s = ''
 
                             if ($1) s += $1
@@ -412,19 +388,16 @@ function Signup() {
                                 onInput={(e: { currentTarget: { value: string } }) => {
                                     e.currentTarget.value = e.currentTarget.value
                                         .replace(/\D/g, '')
-                                        .replace(
-                                            /^(\d{0,3})(\d{0,3})(\d{0,3})(\d{0,2})(.*)$/,
-                                            (all, $1, $2, $3, $4) => {
-                                                let s = ''
+                                        .replace(/^(\d{0,3})(\d{0,3})(\d{0,3})(\d{0,2})(.*)$/, (_, $1, $2, $3, $4) => {
+                                            let s = ''
 
-                                                if ($1) s += $1
-                                                if ($2) s += `.${$2}`
-                                                if ($3) s += `.${$3}`
-                                                if ($4) s += `-${$4}`
+                                            if ($1) s += $1
+                                            if ($2) s += `.${$2}`
+                                            if ($3) s += `.${$3}`
+                                            if ($4) s += `-${$4}`
 
-                                                return s
-                                            },
-                                        )
+                                            return s
+                                        })
                                 }}
                             />
                         </div>
@@ -475,7 +448,7 @@ function Signup() {
                                 onInput={(e: { currentTarget: { value: string } }) => {
                                     e.currentTarget.value = e.currentTarget.value
                                         .replace(/\D/g, '')
-                                        .replace(/^(\d?)(\d?)(\d{0,5})(\d{0,4})(.*)$/, (all, $1, $2, $3, $4) => {
+                                        .replace(/^(\d?)(\d?)(\d{0,5})(\d{0,4})(.*)$/, (_, $1, $2, $3, $4) => {
                                             let s = ''
 
                                             if ($1) s += `(${$1}${$2}`
@@ -496,7 +469,7 @@ function Signup() {
                                 onInput={(e: { currentTarget: { value: string } }) => {
                                     e.currentTarget.value = e.currentTarget.value
                                         .replace(/\D/g, '')
-                                        .replace(/^(\d?)(\d?)(\d{0,5})(\d{0,4})(.*)$/, (all, $1, $2, $3, $4) => {
+                                        .replace(/^(\d?)(\d?)(\d{0,5})(\d{0,4})(.*)$/, (_, $1, $2, $3, $4) => {
                                             let s = ''
 
                                             if ($1) s += `(${$1}${$2}`
@@ -538,7 +511,7 @@ function Signup() {
                                 onInput={e => {
                                     const v = e.currentTarget.value
                                         .replace(/\D/g, '')
-                                        .replace(/^(\d{0,5})(\d{0,3})(.*)$/, (all, $1, $2) => {
+                                        .replace(/^(\d{0,5})(\d{0,3})(.*)$/, (_, $1, $2) => {
                                             let s = ''
 
                                             if ($1) s += $1
@@ -702,7 +675,7 @@ function Signup() {
                                         .replace(/\D/g, '')
                                         .replace(
                                             /^(\d{0,2})(\d{0,3})(\d{0,3})(\d{0,4})(\d{0,2})(.*)$/,
-                                            (all, $1, $2, $3, $4, $5) => {
+                                            (_, $1, $2, $3, $4, $5) => {
                                                 let s = ''
 
                                                 if ($1) s += $1
@@ -750,7 +723,7 @@ function Signup() {
                                 onInput={(e: { currentTarget: { value: string } }) => {
                                     e.currentTarget.value = e.currentTarget.value
                                         .replace(/\D/g, '')
-                                        .replace(/^(\d?)(\d?)(\d{0,5})(\d{0,4})(.*)$/, (all, $1, $2, $3, $4) => {
+                                        .replace(/^(\d?)(\d?)(\d{0,5})(\d{0,4})(.*)$/, (_, $1, $2, $3, $4) => {
                                             let s = ''
 
                                             if ($1) s += `(${$1}${$2}`
@@ -771,7 +744,7 @@ function Signup() {
                                 onInput={(e: { currentTarget: { value: string } }) => {
                                     e.currentTarget.value = e.currentTarget.value
                                         .replace(/\D/g, '')
-                                        .replace(/^(\d?)(\d?)(\d{0,5})(\d{0,4})(.*)$/, (all, $1, $2, $3, $4) => {
+                                        .replace(/^(\d?)(\d?)(\d{0,5})(\d{0,4})(.*)$/, (_, $1, $2, $3, $4) => {
                                             let s = ''
 
                                             if ($1) s += `(${$1}${$2}`
@@ -813,7 +786,7 @@ function Signup() {
                                 onInput={e => {
                                     const v = e.currentTarget.value
                                         .replace(/\D/g, '')
-                                        .replace(/^(\d{0,5})(\d{0,3})(.*)$/, (all, $1, $2) => {
+                                        .replace(/^(\d{0,5})(\d{0,3})(.*)$/, (_, $1, $2) => {
                                             let s = ''
 
                                             if ($1) s += $1
@@ -902,7 +875,9 @@ function Products({ products }: { products: Product[] }) {
         <div class='flex flex-col px-4 divide-y divide-stone-300'>
             {products.map(p => {
                 const { listPrice = 0, seller } = useOffer(p.offers)
-                const cartProduct = cart.value.products!.find(i => i?.productVariantId === Number(p.productID))
+
+                const cartProducts = (cart.value?.products || []).filter(nonNullable)
+                const cartProduct = cartProducts.find(i => i.productVariantId === Number(p.productID))
 
                 if (!cartProduct) return null
 
