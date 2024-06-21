@@ -25,7 +25,7 @@ const expiry = signal('')
 const cvc = signal('')
 const name = signal('')
 
-const { cart, updateItem, addCoupon, removeCoupon } = useCart()
+const { cart, updateItem, addCoupon, removeCoupon, updateCart } = useCart()
 
 const cartProducts = computed(() => (cart.value?.products || []).filter(nonNullable))
 
@@ -83,7 +83,7 @@ function Summary() {
         <>
             <div class='px-4 py-3 flex flex-col gap-2 w-full border border-stone-400'>
                 <div class='w-full flex justify-between items-center bg-stone-200 px-3 py-2'>
-                    <h2 class='font-bold text-lg'>OPÇÕES DE FRETE</h2>
+                    <h2 class='font-bold text-lg'>RESUMO DE PEDIDO</h2>
                     <span class='text-sm'>{cartProducts.value.reduce((acc, cur) => acc + cur.quantity, 0)} itens</span>
                 </div>
 
@@ -238,11 +238,12 @@ function Summary() {
 
 function PaymentMethods() {
     const focused = useSignal<'name' | 'number' | 'expiry' | 'cvc' | ''>('')
+    console.log(cart.value?.selectedPaymentMethod)
 
     return (
         <div class='flex flex-col gap-2 w-full border border-stone-400'>
             <div class='w-full flex justify-between items-center bg-stone-200 px-3 py-2'>
-                <h2 class='font-bold text-lg'>OPÇÕES DE FRETE</h2>
+                <h2 class='font-bold text-lg'>FORMAS DE PAGAMENTO</h2>
             </div>
 
             <div class='px-4 py-3 flex flex-col'>
@@ -261,6 +262,7 @@ function PaymentMethods() {
                                     onInput={async () => {
                                         await invoke.wake.actions.selectPayment({ paymentMethodId: id })
                                         paymentIsSet.value = true
+                                        cart.value = await invoke.wake.loaders.cart()
                                     }}
                                 />
                                 <div class='size-4 border border-stone-500 rounded-full flex justify-center items-center peer-checked:bg-black peer-checked:border-black'>
@@ -272,7 +274,14 @@ function PaymentMethods() {
                     })}
                 </div>
 
-                <div class='hidden flex-col gap-6 peer-has-[input#Cartão:checked]:flex'>
+                {/* <div>
+                    <div dangerouslySetInnerHTML={{ __html: cart.value?.selectedPaymentMethod?.html ?? '' }} />
+                    {(cart.value?.selectedPaymentMethod?.scripts ?? []).filter(nonNullable).map(i => (
+                        <script src={i} />
+                    ))}
+                </div> */}
+
+                <div class='hidden flex-col gap-6 peer-has-[input[id^=Cartão]:checked]:flex'>
                     <Cards
                         number={number.value}
                         expiry={expiry.value}

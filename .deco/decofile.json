@@ -428,30 +428,6 @@
     "__resolveType": "site/sections/Content/Faq.tsx"
   },
   "Fashion theme": {
-    "font": {
-      "fonts": [
-        {
-          "family": "Poppins",
-          "variations": [
-            {
-              "weight": "400"
-            },
-            {
-              "weight": "600"
-            },
-            {
-              "weight": "700"
-            }
-          ]
-        }
-      ],
-      "__resolveType": "website/loaders/fonts/googleFonts.ts"
-    },
-    "fonts": [
-      {
-        "fontFamily": "Poppins"
-      }
-    ],
     "mainColors": {
       "neutral": "#f9f9f9",
       "primary": "#384c53",

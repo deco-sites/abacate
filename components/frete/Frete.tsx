@@ -22,7 +22,7 @@ const products = signal([] as Product[])
 const cartProducts = computed(() => (cart.value?.products || []).filter(nonNullable))
 
 const { user } = useUser()
-const { cart, updateItem, addCoupon, removeCoupon } = useCart()
+const { cart, updateItem, addCoupon, removeCoupon, updateCart } = useCart()
 
 export default function () {
     const loading = useSignal(true)
@@ -73,7 +73,7 @@ function Summary() {
         <>
             <div class='px-4 py-3 flex flex-col gap-2 w-full border border-stone-400'>
                 <div class='w-full flex justify-between items-center bg-stone-200 px-3 py-2'>
-                    <h2 class='font-bold text-lg'>OPÇÕES DE FRETE</h2>
+                    <h2 class='font-bold text-lg'>RESUMO DO PEDIDO</h2>
                     <span class='text-sm'>{cartProducts.value.reduce((acc, cur) => acc + cur.quantity, 0)} itens</span>
                 </div>
 
@@ -227,7 +227,7 @@ function ShippingOptions() {
                         class='w-full px-4 py-2 text-sm text-black border border-stone-500 outline-0'
                         onChange={async e => {
                             await invoke.wake.actions.selectShipping({ shippingQuoteId: e.currentTarget.value })
-                            await invoke.wake.loaders.cart()
+                            await updateCart()
                         }}
                     >
                         <option disabled selected={!cart.value?.selectedShipping?.value}>
@@ -303,6 +303,8 @@ function ShippingAddress() {
     const cep = useCEP()
     const cepDebounce = debounce(500)
 
+    console.log(address.value)
+
     return (
         <div class='border border-stone-400 w-full'>
             <h2 class='w-full px-3 py-2 font-bold text-lg bg-stone-200'>ENDEREÇO DE ENVIO</h2>
@@ -318,7 +320,11 @@ function ShippingAddress() {
                                 class='border border-stone-800 p-3 max-w-72 flex flex-col hover:bg-stone-300 transition-colors relative'
                                 onClick={async () => {
                                     await invoke.wake.actions.selectAddress({ addressId: id })
-                                    await invoke.wake.loaders.cart()
+                                    await updateCart()
+                                    shipping.value = await invoke.wake.actions.shippingSimulation({
+                                        simulateCartItems: true,
+                                        useSelectedAddress: true,
+                                    })
                                 }}
                             >
                                 {cart.value?.selectedAddress?.id === id && (
@@ -378,6 +384,10 @@ function ShippingAddress() {
                                 street,
                             }),
                         )
+
+                        address.value = await invoke.wake.loaders.userAddresses()
+
+                        document.getElementById('add-new-address')?.click()
                     }}
                 >
                     <input
