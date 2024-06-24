@@ -2,6 +2,9 @@ asd@asdasda.sadas
 
 1bb4c27d-3fc7-48b4-a985-7199f31991bc
 
+precisa deslogar depois de finalizar a compra
+pra conseguir comprar de novo?
+
 ## Carrinho (/carrinho)
 
 - [x] Lista de produtos
@@ -65,3 +68,6 @@ asd@asdasda.sadas
 - [ ] Endereço de entrega
 - [ ] Lista de produtos comprados
 - [ ] Imprimir página
+
+The request exceeded the expected time
+Alterar rota callback google pro novo checkout
