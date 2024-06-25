@@ -13,16 +13,18 @@ import { useOffer } from '../../sdk/useOffer.ts'
 import { formatPrice } from '../../sdk/format.ts'
 import getFullProducts from '../../sdk/getFullProducts.ts'
 import nonNullable from '../../sdk/nonNullable.ts'
+import { useId } from '../../sdk/useId.ts'
 
 const address = signal<Awaited<ReturnType<typeof invoke.wake.loaders.userAddresses>>>([])
 const shipping = signal<Awaited<ReturnType<typeof invoke.wake.actions.shippingSimulation>>>(null)
+const customizations = signal<Record<string, Awaited<ReturnType<typeof invoke.wake.loaders.productCustomizations>>>>({})
 
 const products = signal([] as Product[])
 
 const cartProducts = computed(() => (cart.value?.products || []).filter(nonNullable))
 
 const { user } = useUser()
-const { cart, updateItem, addCoupon, removeCoupon, updateCart } = useCart()
+const { cart, updateItem, addCoupon, removeCoupon, updateCart, addItem } = useCart()
 
 export default function () {
     const loading = useSignal(true)
@@ -43,7 +45,22 @@ export default function () {
         ;(async () => {
             products.value = await getFullProducts()
 
-            console.log(products.value)
+            const cartProducts = (cart.value?.products || []).filter(nonNullable)
+            if (!cartProducts.length) return
+
+            customizations.value = Object.fromEntries(
+                await Promise.all(
+                    cartProducts.map(async p => [
+                        p.productId,
+                        await invoke.wake.loaders.productCustomizations({ productId: p.productId }),
+                    ]),
+                ),
+            )
+
+            console.log({
+                products: products.value,
+                customizations: customizations.value,
+            })
         })()
     })
 
@@ -57,9 +74,285 @@ export default function () {
                 <div class='flex flex-col gap-4 w-full'>
                     <ShippingAddress />
                     <ShippingOptions />
+                    <Gift />
                 </div>
                 <div class='flex flex-col w-full'>
                     <Summary />
+                </div>
+            </div>
+        </div>
+    )
+}
+
+function Gift() {
+    const step = useSignal<'select' | 'message'>('select')
+    const selectedProducts = useSignal([] as Product[])
+
+    return (
+        <div class='w-full border border-stone-400'>
+            <input type='checkbox' checked class='peer hidden' id='gift-checkbox' />
+
+            <label
+                for='gift-checkbox'
+                class='w-full flex justify-between items-center bg-stone-200 px-3 py-2 group cursor-pointer'
+            >
+                <h2 class='font-bold text-lg'>EMBALAGEM PARA PRESENTE</h2>
+                <span class='hidden peer-checked:group-[]:block text-xl select-none'>-</span>
+                <span class='block peer-checked:group-[]:hidden text-xl select-none'>+</span>
+            </label>
+
+            <div class='grid grid-rows-[0fr] peer-checked:grid-rows-[1fr] transition-all'>
+                <div class='overflow-hidden'>
+                    <div class='px-4 py-3 flex flex-col'>
+                        <div class='flex flex-col gap-2 text-black'>
+                            <span class='text-sm'>
+                                Selecione quais itens você deseja incluir embalagem para presente:
+                            </span>
+                            <span class='text-xs'>Os itens serão todos embalados separadamente</span>
+                        </div>
+
+                        <div class='flex flex-col divide-y divide-stone-300 border-y border-y-stone-300 mb-2 mt-4'>
+                            {step.value === 'select' ? (
+                                <>
+                                    {products.value.map(i => {
+                                        if (
+                                            !i.inProductGroupWithID ||
+                                            !customizations.value[i.inProductGroupWithID]?.customizations?.length
+                                        ) {
+                                            return null
+                                        }
+
+                                        const { seller } = useOffer(i.offers)
+                                        const cartProduct = cartProducts.value.find(
+                                            ii => ii?.productVariantId === Number(i?.productID),
+                                        )
+
+                                        if (!cartProduct) return null
+
+                                        return (
+                                            <label class='flex items-center gap-5 py-3 px-1 cursor-pointer'>
+                                                <input
+                                                    type='checkbox'
+                                                    class='peer hidden'
+                                                    onInput={e => {
+                                                        if (e.currentTarget.checked) {
+                                                            selectedProducts.value = [...selectedProducts.value, i]
+                                                        } else {
+                                                            selectedProducts.value = selectedProducts.value.filter(
+                                                                ii => ii.productID !== i.productID,
+                                                            )
+                                                        }
+                                                    }}
+                                                />
+
+                                                <div class='size-4 border border-black flex justify-center items-center peer-checked:bg-black'>
+                                                    <Icon id='Check' size={16} class='text-white' />
+                                                </div>
+
+                                                <Image
+                                                    src={i.image?.[0].url ?? ''}
+                                                    alt={i.name ?? ''}
+                                                    width={48}
+                                                    height={56}
+                                                    class='border border-stone-300'
+                                                />
+
+                                                <div class='flex flex-col gap-2'>
+                                                    <h3 class='font-black uppercase text-xs sm:text-sm'>
+                                                        {seller || 'ABACATE'}
+                                                    </h3>
+                                                    <h4 class='text-black text-sm'>{i.name}</h4>
+                                                </div>
+
+                                                <span class='text-sm block ml-auto whitespace-nowrap'>
+                                                    Qtd: {cartProduct.quantity}
+                                                </span>
+                                            </label>
+                                        )
+                                    })}
+                                </>
+                            ) : (
+                                <>
+                                    {selectedProducts.value.map(i => {
+                                        const { seller } = useOffer(i.offers)
+                                        const cartProduct = cartProducts.value.find(
+                                            ii => ii?.productVariantId === Number(i?.productID),
+                                        )
+
+                                        if (!cartProduct) return null
+                                        const id = useId()
+
+                                        return (
+                                            <div data-product-id={i.inProductGroupWithID} class='flex flex-col py-3'>
+                                                <div class='flex items-center gap-5 px-1'>
+                                                    <Image
+                                                        src={i.image?.[0].url ?? ''}
+                                                        alt={i.name ?? ''}
+                                                        width={48}
+                                                        height={56}
+                                                        class='border border-stone-300'
+                                                    />
+
+                                                    <div class='flex flex-col gap-2'>
+                                                        <h3 class='font-black uppercase text-xs sm:text-sm'>
+                                                            {seller || 'ABACATE'}
+                                                        </h3>
+                                                        <h4 class='text-black text-sm'>{i.name}</h4>
+                                                    </div>
+                                                </div>
+
+                                                <input
+                                                    id={`yes-${id}`}
+                                                    type='radio'
+                                                    name={`gift-message-${id}`}
+                                                    class='peer/yes hidden'
+                                                />
+                                                <input
+                                                    id={`no-${id}`}
+                                                    type='radio'
+                                                    name={`gift-message-${id}`}
+                                                    class='peer/no hidden'
+                                                    checked
+                                                />
+
+                                                <div class='flex items-center mt-6 group'>
+                                                    <span class='text-sm text-black font-bold'>
+                                                        GOSTARIA DE ADICIONAR UMA MENSAGEM?
+                                                    </span>
+
+                                                    <div class='flex items-center gap-2 ml-auto'>
+                                                        <label
+                                                            for={`yes-${id}`}
+                                                            class='cursor-pointer py-2 px-4 font-bold border border-black hover:bg-stone-300 transition-colors peer-checked/yes:group-[]:bg-stone-300'
+                                                        >
+                                                            SIM
+                                                        </label>
+                                                        <label
+                                                            for={`no-${id}`}
+                                                            class='cursor-pointer py-2 px-4 font-bold border border-black hover:bg-stone-300 transition-colors peer-checked/no:group-[]:bg-stone-300'
+                                                        >
+                                                            NÃO
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                                <form class='hidden peer-checked/yes:flex flex-col gap-2 mt-2'>
+                                                    <div class='flex items-center gap-2'>
+                                                        <input
+                                                            type='text'
+                                                            name='from'
+                                                            placeholder='De'
+                                                            class='w-full border border-stone-300 p-2 outline-0'
+                                                        />
+                                                        <input
+                                                            type='text'
+                                                            name='to'
+                                                            placeholder='Para'
+                                                            class='w-full border border-stone-300 p-2 outline-0'
+                                                        />
+                                                    </div>
+                                                    <textarea
+                                                        name='message'
+                                                        placeholder='Mensagem'
+                                                        class='w-full border border-stone-300 p-2 outline-0 h-24'
+                                                    />
+                                                </form>
+                                            </div>
+                                        )
+                                    })}
+                                </>
+                            )}
+                        </div>
+
+                        <div class='flex items-center justify-end gap-4'>
+                            {step.value !== 'select' && (
+                                <button
+                                    type='button'
+                                    onClick={() => {
+                                        step.value = 'select'
+                                    }}
+                                    class='underline text-black text-sm hover:no-underline cursor-pointer'
+                                >
+                                    VOLTAR
+                                </button>
+                            )}
+                            <button
+                                type='button'
+                                disabled={selectedProducts.value.length === 0}
+                                onClick={async () => {
+                                    if (step.value === 'select') {
+                                        step.value = 'message'
+                                    } else {
+                                        for (const i of document.querySelectorAll('[data-product-id]')) {
+                                            const productID = i?.getAttribute('data-product-id')
+                                            if (!productID) throw new Error('Product ID not found in cart')
+
+                                            const yes = i?.querySelector<HTMLInputElement>('[id^="yes"]')?.checked
+                                            const no = i?.querySelector<HTMLInputElement>('[id^="no"]')?.checked
+                                            const customization = customizations.value[productID]
+                                            const isGift = customization?.customizations
+                                                ?.filter(nonNullable)
+                                                .find(i => i.name === 'isGift')
+                                            const text = customization?.customizations
+                                                ?.filter(nonNullable)
+                                                .find(i => i.name === 'text')
+                                            const form = i?.querySelector<HTMLFormElement>('form')
+
+                                            console.log({ customization, isGift, text, productID })
+
+                                            if (!isGift) throw new Error('isGift not found in customization')
+                                            if (!text) throw new Error('text not found in customization')
+                                            if (!form) throw new Error('Form not found in product')
+                                            if (!customization) {
+                                                throw new Error(`Customization not found for product ${productID}`)
+                                            }
+
+                                            const from = form.from.value
+                                            const to = form.to.value
+                                            const message = form.message.value
+
+                                            await updateItem({
+                                                productVariantId: Number(productID),
+                                                quantity: 0,
+                                            })
+
+                                            if (yes) {
+                                                await addItem({
+                                                    productVariantId: customization.productVariantId,
+                                                    quantity: 1,
+                                                    customization: [
+                                                        { customizationId: isGift.customizationId, value: 'Sim' },
+                                                        {
+                                                            customizationId: text.customizationId,
+                                                            value: `De: ${from} \nPara: ${to} \n${message}`,
+                                                        },
+                                                    ],
+                                                })
+                                            } else if (no) {
+                                                console.log({
+                                                    productVariantId: customization.productVariantId,
+                                                    quantity: 1,
+                                                    customization: [
+                                                        { customizationId: isGift.customizationId, value: 'Sim' },
+                                                    ],
+                                                })
+                                                await addItem({
+                                                    productVariantId: customization.productVariantId,
+                                                    quantity: 1,
+                                                    customization: [
+                                                        { customizationId: isGift.customizationId, value: 'Sim' },
+                                                    ],
+                                                })
+                                            }
+                                        }
+                                    }
+                                }}
+                                class='mt-2 w-full max-w-[240px] border border-stone-500 text-sm p-2 cursor-pointer hover:bg-black hover:border-black hover:text-stone-100 transition-all disabled:opacity-40 peer-checked:hidden'
+                            >
+                                {step.value === 'select' ? 'SELECIONAR' : 'ADICIONAR'}
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -302,8 +595,6 @@ function ShippingAddress() {
 
     const cep = useCEP()
     const cepDebounce = debounce(500)
-
-    console.log(address.value)
 
     return (
         <div class='border border-stone-400 w-full'>

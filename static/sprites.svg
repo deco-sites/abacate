@@ -112,4 +112,5 @@
 
 	<symbol id="Trash" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256"><path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"></path></symbol>
 	<symbol id="AddressCheck" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" fill="none"><g id="check"><circle id="Ellipse 2" cx="9" cy="9" r="8" stroke="white"/><path id="Vector 2" d="M4.63647 9.36364L7.54557 12.2727L13.7274 6.09091" stroke="white" stroke-linecap="round" stroke-linejoin="round"/></g></symbol>
+	<symbol id="Check" viewBox='0 0 16 16' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/></symbol>
 </svg>

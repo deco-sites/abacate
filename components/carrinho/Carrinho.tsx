@@ -27,6 +27,7 @@ export default function () {
         ;(async () => {
             products.value = await getFullProducts()
 
+            console.log(console.log(cart.value))
             console.log(products.value)
         })()
     })
@@ -254,13 +255,14 @@ function Login() {
         <form
             id='form-person'
             class='flex flex-col gap-4 w-full max-w-[444px] p-4'
-            onSubmit={e => {
+            onSubmit={async e => {
                 e.preventDefault()
 
                 const email = (e.currentTarget.elements.namedItem('email') as HTMLInputElement).value
                 const password = (e.currentTarget.elements.namedItem('password') as HTMLInputElement).value
 
-                invoke.wake.actions.login({ input: email, pass: password }).then(console.log)
+                await invoke.wake.actions.login({ input: email, pass: password }).then(console.log)
+                await invoke.wake.actions.associateCheckout()
             }}
         >
             <div class='flex gap-4'>

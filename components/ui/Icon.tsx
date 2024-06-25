@@ -5,6 +5,7 @@ export type AvailableIcons =
   | "AddressCheck"
   | "ArrowsPointingOut"
   | "Bars3"
+  | "Check"
   | "ChevronLeft"
   | "ChevronRight"
   | "ChevronUp"

@@ -17,6 +17,7 @@ import getFullProducts from '../../sdk/getFullProducts.ts'
 import nonNullable from '../../sdk/nonNullable.ts'
 import { useUser } from 'apps/wake/hooks/useUser.ts'
 import Loading from '../Loading.tsx'
+import { deleteCookie } from 'std/http/cookie.ts'
 
 const paymentMethods = signal<Awaited<ReturnType<typeof invoke.wake.loaders.paymentMethods>>>([])
 const paymentMethodsPrices = signal<Awaited<ReturnType<typeof invoke.wake.loaders.calculatePrices>>>(null)
@@ -303,7 +304,8 @@ function Summary() {
                         )
                     }
 
-                    await invoke.wake.actions.cloneCheckout()
+                    await invoke.wake.loaders.cart()
+                    await invoke.wake.actions.associateCheckout()
                 }}
                 disabled={!paymentIsSet.value}
                 class='bg-yellow-800 text-center text-white font-bold text-sm py-2.5 w-full transition-all ease-in-out duration-300 hover:brightness-90 mt-2 disabled:cursor-not-allowed disabled:opacity-50'
