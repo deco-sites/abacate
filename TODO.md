@@ -75,7 +75,7 @@ O pagamento da adyen não funciona corretamente, não retorna o código do pix p
 
 ## (Página extra) Login/Cadastro (/login)
 
-- [ ] Fazer a página
+- [x] Fazer a página
 - [x] Login
 - [x] Cadastro
 - [ ] Google
