@@ -6,18 +6,16 @@ import { invoke } from '../../runtime.ts'
 import { formatPrice } from '../../sdk/format.ts'
 import { useOffer } from '../../sdk/useOffer.ts'
 import { Total } from '../carrinho/Carrinho.tsx'
-import { useEffect } from 'preact/hooks'
 
 // https://github.com/denoland/fresh/discussions/432#discussioncomment-3182480
 import Cards from 'https://esm.sh/react-credit-cards-2@1.0.2?alias=react:preact/compat&external=preact'
 
-import { asset } from '$fresh/runtime.ts'
+import { useUser } from 'apps/wake/hooks/useUser.ts'
 import type { AppContext } from 'apps/wake/mod.ts'
 import getFullProducts from '../../sdk/getFullProducts.ts'
 import nonNullable from '../../sdk/nonNullable.ts'
-import { useUser } from 'apps/wake/hooks/useUser.ts'
 import Loading from '../Loading.tsx'
-import { deleteCookie } from 'std/http/cookie.ts'
+import CheckoutBreadcrumb from '../ui/CheckoutBreadcrumb.tsx'
 
 const paymentMethods = signal<Awaited<ReturnType<typeof invoke.wake.loaders.paymentMethods>>>([])
 const paymentMethodsPrices = signal<Awaited<ReturnType<typeof invoke.wake.loaders.calculatePrices>>>(null)
@@ -99,7 +97,7 @@ export default function () {
                     }}
                 />
 
-                <Breadcrumb />
+                <CheckoutBreadcrumb />
 
                 <div class='flex gap-4'>
                     <div class='flex flex-col gap-4 w-full'>
@@ -134,6 +132,10 @@ function Summary() {
 
                         const price = cartProduct.price
 
+                        const giftText = cartProduct.customization?.values
+                            ?.filter(nonNullable)
+                            .find(i => i.name === 'text')
+
                         return (
                             <div class='flex items-center'>
                                 <Image
@@ -153,6 +155,14 @@ function Summary() {
                                             </div>
                                         ))}
                                     </div>
+                                    <div class='text-sm mt-2'>
+                                        {cartProduct.customization?.values
+                                            ?.filter(nonNullable)
+                                            .some(i => i.name === 'isGift')
+                                            ? 'Será entregue como presente'
+                                            : ''}
+                                    </div>
+                                    <div class='text-sm'>{giftText ? giftText.value : ''}</div>
                                 </div>
 
                                 <div class='flex justify-center ml-auto'>
@@ -570,24 +580,6 @@ function PaymentMethods() {
                     </form>
                 </div>
             </div>
-        </div>
-    )
-}
-
-function Breadcrumb() {
-    return (
-        <div class='flex items-center gap-2'>
-            <a href='/carrinho' class='text-sm'>
-                Carrinho
-            </a>
-            <span class='text-sm'>{'>'}</span>
-            <a href='/frete' class='text-sm'>
-                Frete
-            </a>
-            <span class='text-sm'>{'>'}</span>
-            <a href='/pagamento' class='text-sm font-bold'>
-                Pagamento
-            </a>
         </div>
     )
 }

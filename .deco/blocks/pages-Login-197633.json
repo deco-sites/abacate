@@ -1,0 +1,13 @@
+{
+  "name": "Login",
+  "path": "/login",
+  "sections": [
+    {
+      "__resolveType": "site/sections/Login/Login.tsx"
+    }
+  ],
+  "seo": {
+    "__resolveType": "website/sections/Seo/SeoV2.tsx"
+  },
+  "__resolveType": "website/pages/Page.tsx"
+}

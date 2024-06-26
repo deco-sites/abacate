@@ -1,19 +1,20 @@
+import { computed, signal, useSignal, useSignalEffect } from '@preact/signals'
+import type { Product } from 'apps/commerce/types.ts'
+import { useCart } from 'apps/wake/hooks/useCart.ts'
+import { useUser } from 'apps/wake/hooks/useUser.ts'
+import Image from 'apps/website/components/Image.tsx'
 import { useEffect } from 'preact/hooks'
-import { useSignal, signal, useSignalEffect, computed } from '@preact/signals'
 import { invoke } from '../../runtime.ts'
 import debounce from '../../sdk/debounce.ts'
-import useCEP from '../../sdk/useCEP.ts'
-import { useUser } from 'apps/wake/hooks/useUser.ts'
-import Icon from '../ui/Icon.tsx'
-import { Total, formatShipping } from '../carrinho/Carrinho.tsx'
-import { useCart } from 'apps/wake/hooks/useCart.ts'
-import type { Product } from 'apps/commerce/types.ts'
-import Image from 'apps/website/components/Image.tsx'
-import { useOffer } from '../../sdk/useOffer.ts'
 import { formatPrice } from '../../sdk/format.ts'
 import getFullProducts from '../../sdk/getFullProducts.ts'
 import nonNullable from '../../sdk/nonNullable.ts'
+import useCEP from '../../sdk/useCEP.ts'
 import { useId } from '../../sdk/useId.ts'
+import { useOffer } from '../../sdk/useOffer.ts'
+import { Total, formatShipping } from '../carrinho/Carrinho.tsx'
+import CheckoutBreadcrumb from '../ui/CheckoutBreadcrumb.tsx'
+import Icon from '../ui/Icon.tsx'
 
 const address = signal<Awaited<ReturnType<typeof invoke.wake.loaders.userAddresses>>>([])
 const shipping = signal<Awaited<ReturnType<typeof invoke.wake.actions.shippingSimulation>>>(null)
@@ -68,7 +69,7 @@ export default function () {
 
     return (
         <div class='container mx-auto max-w-[1330px] py-6 px-4 flex flex-col gap-4 min-h-screen'>
-            <Breadcrumb />
+            <CheckoutBreadcrumb />
 
             <div class='flex gap-4'>
                 <div class='flex flex-col gap-4 w-full'>
@@ -379,6 +380,10 @@ function Summary() {
 
                         const price = cartProduct.price
 
+                        const giftText = cartProduct.customization?.values
+                            ?.filter(nonNullable)
+                            .find(i => i.name === 'text')
+
                         return (
                             <div class='flex items-center'>
                                 <Image
@@ -398,6 +403,14 @@ function Summary() {
                                             </div>
                                         ))}
                                     </div>
+                                    <div class='text-sm mt-2'>
+                                        {cartProduct.customization?.values
+                                            ?.filter(nonNullable)
+                                            .some(i => i.name === 'isGift')
+                                            ? 'Será entregue como presente'
+                                            : ''}
+                                    </div>
+                                    <div class='text-sm'>{giftText ? giftText.value : ''}</div>
                                 </div>
 
                                 <div class='flex justify-center ml-auto'>
@@ -551,6 +564,10 @@ function ShippingOptions() {
 
                         const price = cartProduct.price
 
+                        const giftText = cartProduct.customization?.values
+                            ?.filter(nonNullable)
+                            .find(i => i.name === 'text')
+
                         return (
                             <div class='p-3 flex items-center'>
                                 <Image
@@ -570,6 +587,14 @@ function ShippingOptions() {
                                             </div>
                                         ))}
                                     </div>
+                                    <div class='text-sm mt-2'>
+                                        {cartProduct.customization?.values
+                                            ?.filter(nonNullable)
+                                            .some(i => i.name === 'isGift')
+                                            ? 'Será entregue como presente'
+                                            : ''}
+                                    </div>
+                                    <div class='text-sm'>{giftText ? giftText.value : ''}</div>
                                 </div>
 
                                 <div class='flex flex-col gap-1 ml-auto'>
@@ -833,24 +858,6 @@ function ShippingAddress() {
                     </button>
                 </form>
             </div>
-        </div>
-    )
-}
-
-function Breadcrumb() {
-    return (
-        <div class='flex items-center gap-2'>
-            <a href='/carrinho' class='text-sm'>
-                Carrinho
-            </a>
-            <span class='text-sm'>{'>'}</span>
-            <a href='/frete' class='text-sm font-bold'>
-                Frete
-            </a>
-            <span class='text-sm'>{'>'}</span>
-            <a href='/pagamento' class='text-sm'>
-                Pagamento
-            </a>
         </div>
     )
 }

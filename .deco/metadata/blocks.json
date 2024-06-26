@@ -318,5 +318,17 @@
     "path": "/confirmacao",
     "blockType": "pages",
     "__resolveType": "website/pages/Page.tsx"
+  },
+  "/.deco/blocks/pages-Login-197633.json": {
+    "name": "Login",
+    "path": "/login",
+    "blockType": "pages",
+    "__resolveType": "website/pages/Page.tsx"
+  },
+  "/.deco/blocks/pages-Signup-428594.json": {
+    "name": "Signup",
+    "path": "/signup",
+    "blockType": "pages",
+    "__resolveType": "website/pages/Page.tsx"
   }
 }

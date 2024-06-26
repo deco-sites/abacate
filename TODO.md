@@ -38,8 +38,8 @@ pra conseguir comprar de novo?
 - [x] Botão
 - [x] Lista de produtos
 - [x] Código de desconto
-- [ ] Embalagem para presente
-- [ ] Adicionar mensagem
+- [x] Embalagem para presente
+- [x] Adicionar mensagem
 
 ## Fechamento (/Fechamento)
 
