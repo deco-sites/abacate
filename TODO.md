@@ -2,6 +2,8 @@ asd@asdasda.sadas
 
 1bb4c27d-3fc7-48b4-a985-7199f31991bc
 
+977b5261-9e43-47d8-bca2-a072557739c8
+
 precisa deslogar depois de finalizar a compra
 pra conseguir comprar de novo?
 
@@ -65,12 +67,12 @@ pra conseguir comprar de novo?
 *Impeditivo*
 O pagamento da adyen não funciona corretamente, não retorna o código do pix por exemplo
 
-- [ ] Resumo do pedido
-- [ ] Informações do pedido
+- [x] Resumo do pedido
+- [x] Informações do pedido
 - [ ] PIX para pagamento (caso tenha escolhido essa forma de pagamento)
-- [ ] Endereço de entrega
-- [ ] Lista de produtos comprados
-- [ ] Imprimir página
+- [x] Endereço de entrega
+- [x] Lista de produtos comprados
+- [x] Imprimir página
 
 
 ## (Página extra) Login/Cadastro (/login)
