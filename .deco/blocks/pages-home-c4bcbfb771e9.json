@@ -145,8 +145,30 @@
       },
       "products": {
         "crossSelling": "similars",
-        "__resolveType": "wake/loaders/recommendations.ts",
-        "algorithm": "DEFAULT"
+        "__resolveType": "wake/loaders/productList.ts",
+        "first": 12,
+        "sortDirection": "ASC",
+        "sortKey": "DISCOUNT",
+        "filters": {
+          "attributes": {
+            "id": [],
+            "name": [],
+            "type": [],
+            "value": []
+          },
+          "brandId": [],
+          "categoryId": [],
+          "ean": [],
+          "productId": [],
+          "productVariantId": [],
+          "sameParentAs": [],
+          "sku": [],
+          "stocks": {
+            "dcId": [],
+            "dcName": []
+          },
+          "prices": {}
+        }
       },
       "cardLayout": {
         "layout": {

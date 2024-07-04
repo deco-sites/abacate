@@ -25,10 +25,6 @@
       "prices": {}
     }
   },
-  "extensions": [
-    {
-      "__resolveType": "vtex/loaders/product/extensions/listingPage.ts"
-    }
-  ],
+  "extensions": [],
   "__resolveType": "commerce/loaders/product/extensions/listingPage.ts"
 }
