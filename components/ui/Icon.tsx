@@ -41,6 +41,7 @@ export type AvailableIcons =
     | 'share'
     | 'ShoppingCart'
     | 'Star'
+    | 'Google'
     | 'Tiktok'
     | 'Trash'
     | 'Truck'

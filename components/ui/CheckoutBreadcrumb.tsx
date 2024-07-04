@@ -36,7 +36,7 @@ export default function () {
                     type='button'
                     onClick={async () => {
                         await invoke.wake.actions.logout()
-                        // location.reload()
+                        location.reload()
                     }}
                     class='cool-btn py-2 px-4 bg-[#005CB1] rounded text-zinc-100 text-lg'
                 >

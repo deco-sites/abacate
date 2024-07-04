@@ -9,8 +9,10 @@ import nonNullable from '../../sdk/nonNullable.ts'
 import { useOffer } from '../../sdk/useOffer.ts'
 import CheckoutBreadcrumb from '../ui/CheckoutBreadcrumb.tsx'
 import Icon from '../ui/Icon.tsx'
+import { useUser } from "apps/vtex/hooks/useUser.ts";
 
 const { cart, updateItem, addCoupon } = useCart()
+const { user } = useUser()
 
 const shippingLoading = signal(false)
 const shipping = signal<Awaited<ReturnType<typeof invoke.wake.actions.shippingSimulation>>>(null)
@@ -18,7 +20,6 @@ const checkoutCoupon = signal<Awaited<ReturnType<typeof invoke.wake.loaders.chec
 const products = signal([] as Product[])
 
 export default function () {
-    const user = useSignal<Awaited<ReturnType<typeof invoke.wake.loaders.user>> | null>(null)
     const loading = useSignal(true)
     const cartProducts = useComputed(() => (cart.value?.products || []).filter(nonNullable))
 
@@ -41,14 +42,7 @@ export default function () {
 
     useEffect(() => {
         ;(async () => {
-            await Promise.all([
-                invoke.wake.loaders.user().then(i => {
-                    user.value = i
-                }),
-                invoke.wake.loaders.checkoutCoupon().then(i => {
-                    checkoutCoupon.value = i
-                }),
-            ])
+            checkoutCoupon.value = await invoke.wake.loaders.checkoutCoupon()
 
             loading.value = false
         })()
@@ -79,7 +73,7 @@ export default function () {
                     <div class='w-full h-px bg-stone-400 my-2' />
                     <Total shippingPrice={cart.value?.selectedShipping?.value} />
                     <a
-                        href='/frete'
+                        href={user.value ? '/frete' : '/login?returnUrl=/frete'}
                         class='bg-yellow-800 text-center text-white font-bold text-sm py-2.5 w-full transition-all ease-in-out duration-300 hover:brightness-90 mt-2 disabled:cursor-not-allowed disabled:opacity-50'
                     >
                         FINALIZAR COMPRA
