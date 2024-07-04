@@ -1,9 +1,31 @@
 import { useCart } from 'apps/wake/hooks/useCart.ts'
 import { invoke } from '../../runtime.ts'
 import CheckoutBreadcrumb from '../ui/CheckoutBreadcrumb.tsx'
+import { useEffect } from 'preact/hooks'
+import { useSignal } from '@preact/signals'
+import { useUser } from 'apps/wake/hooks/useUser.ts'
 
 export default function () {
     useCart()
+    const socialLoginSetupEnded = useSignal(false)
+    const { updateUser } = useUser()
+
+    useEffect(() => {
+        // @ts-ignore -
+        globalThis.handleGSI = async ({
+            credential,
+        }: { clientId: string; client_id: string; credential: string; select_by: string }) => {
+            const { logged } = (await invoke.wake.actions.loginGoogle({ userCredential: credential })) || {}
+
+            location.href = '/signup?partial=1'
+            if (!logged) {
+            }
+
+            await updateUser()
+        }
+
+        socialLoginSetupEnded.value = true
+    }, [])
 
     return (
         <div class='container mx-auto max-w-[1330px] py-6 px-4 flex flex-col gap-4 min-h-screen'>
@@ -22,6 +44,8 @@ export default function () {
 
                     await invoke.wake.actions.login({ input: email, pass: password }).then(console.log)
                     await invoke.wake.actions.associateCheckout()
+
+                    await updateUser()
                 }}
             >
                 <div class='flex flex-col gap-4'>
@@ -39,6 +63,18 @@ export default function () {
                     Login
                 </button>
             </form>
+
+            {socialLoginSetupEnded.value && (
+                <>
+                    <script src='https://accounts.google.com/gsi/client' async defer />
+                    <div
+                        id='g_id_onload'
+                        data-client_id='131433210613-pcl0q19802bpcg3a73sk6682rbp7glsl.apps.googleusercontent.com'
+                        data-callback='handleGSI'
+                    />
+                    <div class='g_id_signin' data-type='standard' />
+                </>
+            )}
         </div>
     )
 }

@@ -33,14 +33,19 @@ export default function () {
     useEffect(() => {
         ;(async () => {
             address.value = await invoke.wake.loaders.userAddresses()
-            shipping.value = await invoke.wake.actions.shippingSimulation({
-                simulateCartItems: true,
-                useSelectedAddress: true,
-            })
+
+            if (address.value.length && cart.value?.selectedAddress) {
+                shipping.value = await invoke.wake.actions.shippingSimulation({
+                    simulateCartItems: true,
+                    useSelectedAddress: true,
+                })
+            }
 
             loading.value = false
         })()
     }, [])
+    
+    console.log(cart.value)
 
     useSignalEffect(() => {
         ;(async () => {
@@ -702,6 +707,22 @@ function ShippingAddress() {
                         )
 
                         address.value = await invoke.wake.loaders.userAddresses()
+
+                        if (!cart.value?.selectedAddress) {
+                            await invoke.wake.actions.selectAddress({
+                                addressId: address.value.at(-1)?.id ?? '',
+                            })
+                        }
+
+                        await Promise.all([
+                            updateCart(),
+                            async () => {
+                                shipping.value = await invoke.wake.actions.shippingSimulation({
+                                    simulateCartItems: true,
+                                    useSelectedAddress: true,
+                                })
+                            },
+                        ])
 
                         document.getElementById('add-new-address')?.click()
                     }}

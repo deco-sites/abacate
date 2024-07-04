@@ -15,30 +15,40 @@ const { cart, updateItem, addCoupon } = useCart()
 const shippingLoading = signal(false)
 const shipping = signal<Awaited<ReturnType<typeof invoke.wake.actions.shippingSimulation>>>(null)
 const checkoutCoupon = signal<Awaited<ReturnType<typeof invoke.wake.loaders.checkoutCoupon>>>(null)
+const products = signal([] as Product[])
 
 export default function () {
     const user = useSignal<Awaited<ReturnType<typeof invoke.wake.loaders.user>> | null>(null)
     const loading = useSignal(true)
-    const products = useSignal([] as Product[])
+    const cartProducts = useComputed(() => (cart.value?.products || []).filter(nonNullable))
+
+    if (Object.keys(cart.value || {}).length === 0) return null
+    if (cartProducts.value.length === 0)
+        return (
+            <div class='flex flex-col gap-4 justify-center items-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
+                <span class='text-sm'>NENHUM PRODUTO ADICIONADO AO CARRINHO</span>
+                <a href='/' class='block text-sm font-bold text-white bg-black px-4 py-2'>
+                    CONTINUAR COMPRANDO
+                </a>
+            </div>
+        )
 
     useSignalEffect(() => {
         ;(async () => {
             products.value = await getFullProducts()
-
-            console.log(console.log(cart.value))
-            console.log(products.value)
         })()
     })
 
     useEffect(() => {
         ;(async () => {
-            user.value = await invoke.wake.loaders.user()
-            checkoutCoupon.value = await invoke.wake.loaders.checkoutCoupon()
-
-            if (!user.value) {
-                loading.value = false
-                return
-            }
+            await Promise.all([
+                invoke.wake.loaders.user().then(i => {
+                    user.value = i
+                }),
+                invoke.wake.loaders.checkoutCoupon().then(i => {
+                    checkoutCoupon.value = i
+                }),
+            ])
 
             loading.value = false
         })()
@@ -50,34 +60,32 @@ export default function () {
         <div class='p-4 flex flex-col gap-4 min-h-screen container mx-auto max-w-[1330px]'>
             <CheckoutBreadcrumb />
 
-            {products.value.length > 0 && (
-                <div class='flex items-start gap-6'>
-                    <div class='flex flex-col w-full'>
-                        <div class='px-3 py-3 flex justify-between items-center bg-stone-200'>
-                            <h2 class='text-sm font-bold text-stone-500'>ENVIO 01</h2>
-                            <p class='text-sm'>
-                                Vendido e entregue por: <span class='uppercase font-black ml-2'>ABACATE</span>
-                            </p>
-                        </div>
+            <div class='flex items-start gap-6'>
+                <div class='flex flex-col w-full'>
+                    <div class='px-3 py-3 flex justify-between items-center bg-stone-200'>
+                        <h2 class='text-sm font-bold text-stone-500'>ENVIO 01</h2>
+                        <p class='text-sm'>
+                            Vendido e entregue por: <span class='uppercase font-black ml-2'>ABACATE</span>
+                        </p>
+                    </div>
 
-                        <Products products={products.value} />
-                        <ShippingOptions />
-                    </div>
-                    <div class='p-4 border border-stone-300 flex flex-col gap-4 divider-y divider-stone-300'>
-                        <Shipping />
-                        <div class='w-full h-px bg-stone-400 my-2' />
-                        <Coupon />
-                        <div class='w-full h-px bg-stone-400 my-2' />
-                        <Total shippingPrice={cart.value?.selectedShipping?.value} />
-                        <a
-                            href='/frete'
-                            class='bg-yellow-800 text-center text-white font-bold text-sm py-2.5 w-full transition-all ease-in-out duration-300 hover:brightness-90 mt-2 disabled:cursor-not-allowed disabled:opacity-50'
-                        >
-                            FINALIZAR COMPRA
-                        </a>
-                    </div>
+                    <Products />
+                    <ShippingOptions />
                 </div>
-            )}
+                <div class='p-4 border border-stone-300 flex flex-col gap-4 divider-y divider-stone-300'>
+                    <Shipping />
+                    <div class='w-full h-px bg-stone-400 my-2' />
+                    <Coupon />
+                    <div class='w-full h-px bg-stone-400 my-2' />
+                    <Total shippingPrice={cart.value?.selectedShipping?.value} />
+                    <a
+                        href='/frete'
+                        class='bg-yellow-800 text-center text-white font-bold text-sm py-2.5 w-full transition-all ease-in-out duration-300 hover:brightness-90 mt-2 disabled:cursor-not-allowed disabled:opacity-50'
+                    >
+                        FINALIZAR COMPRA
+                    </a>
+                </div>
+            </div>
         </div>
     )
 }
@@ -239,10 +247,10 @@ export function Total({ shippingPrice }: { shippingPrice?: number }) {
     )
 }
 
-function Products({ products }: { products: Product[] }) {
+function Products() {
     return (
         <div class='flex flex-col px-4 divide-y divide-stone-300'>
-            {products.map(p => {
+            {products.value.map(p => {
                 const { listPrice = 0, seller } = useOffer(p.offers)
 
                 const cartProducts = (cart.value?.products || []).filter(nonNullable)

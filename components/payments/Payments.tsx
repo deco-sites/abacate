@@ -316,6 +316,8 @@ function Summary() {
 
                     await invoke.wake.loaders.cart()
                     await invoke.wake.actions.associateCheckout()
+
+                    location.href = `/confirmacao?id=${cart.value.checkoutId}`
                 }}
                 disabled={!paymentIsSet.value}
                 class='bg-yellow-800 text-center text-white font-bold text-sm py-2.5 w-full transition-all ease-in-out duration-300 hover:brightness-90 mt-2 disabled:cursor-not-allowed disabled:opacity-50'
