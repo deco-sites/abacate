@@ -61,6 +61,14 @@ export default function () {
             await invoke.wake.actions.associateCheckout();
 
             await updateUser();
+
+            const returnUrl = new URLSearchParams(location.search).get(
+              "returnUrl",
+            );
+
+            if (returnUrl) {
+              location.href = returnUrl;
+            }
           }}
         >
           <div class="flex flex-col gap-4">

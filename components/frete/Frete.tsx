@@ -3,7 +3,6 @@ import type { Product } from "apps/commerce/types.ts";
 import { useCart } from "apps/wake/hooks/useCart.ts";
 import { useUser } from "apps/wake/hooks/useUser.ts";
 import Image from "apps/website/components/Image.tsx";
-import { useEffect } from "preact/hooks";
 import { invoke } from "../../runtime.ts";
 import debounce from "../../sdk/debounce.ts";
 import { formatPrice } from "../../sdk/format.ts";
@@ -35,29 +34,33 @@ const cartProducts = computed(() =>
   (cart.value?.products || []).filter(nonNullable)
 );
 
-const { user } = useUser();
+const { user, loading: loadingUser } = useUser();
 const { cart, updateItem, addCoupon, removeCoupon, updateCart, addItem } =
   useCart();
 
 export default function () {
   const loading = useSignal(true);
+  const isFirstLoad = useSignal(true);
 
-  useEffect(() => {
+  useSignalEffect(() => {
     (async () => {
-      address.value = await invoke.wake.loaders.userAddresses();
+      if (!isFirstLoad.value || (!user.value && loadingUser.value)) return;
 
-      if (address.value.length && cart.value?.selectedAddress) {
-        shipping.value = await invoke.wake.actions.shippingSimulation({
-          simulateCartItems: true,
-          useSelectedAddress: true,
-        });
+      if (user.value) {
+        address.value = await invoke.wake.loaders.userAddresses();
+
+        if (address.value.length && cart.value?.selectedAddress) {
+          shipping.value = await invoke.wake.actions.shippingSimulation({
+            simulateCartItems: true,
+            useSelectedAddress: true,
+          });
+        }
       }
 
       loading.value = false;
+      isFirstLoad.value = false;
     })();
-  }, []);
-
-  console.log(cart.value);
+  });
 
   useSignalEffect(() => {
     (async () => {
@@ -325,9 +328,7 @@ function Gift() {
                     ) {
                       const productID = i?.getAttribute("data-product-id");
                       if (!productID) {
-                        throw new Error(
-                          "Product ID not found in cart",
-                        );
+                        throw new Error("Product ID not found in cart");
                       }
 
                       const yes = i?.querySelector<HTMLInputElement>(
@@ -345,17 +346,11 @@ function Gift() {
                         .find((i) => i.name === "text");
                       const form = i?.querySelector<HTMLFormElement>("form");
 
-                      console.log({ customization, isGift, text, productID });
-
                       if (!isGift) {
-                        throw new Error(
-                          "isGift not found in customization",
-                        );
+                        throw new Error("isGift not found in customization");
                       }
                       if (!text) {
-                        throw new Error(
-                          "text not found in customization",
-                        );
+                        throw new Error("text not found in customization");
                       }
                       if (!form) throw new Error("Form not found in product");
                       if (!customization) {
@@ -389,16 +384,6 @@ function Gift() {
                           ],
                         });
                       } else if (no) {
-                        console.log({
-                          productVariantId: customization.productVariantId,
-                          quantity: 1,
-                          customization: [
-                            {
-                              customizationId: isGift.customizationId,
-                              value: "Sim",
-                            },
-                          ],
-                        });
                         await addItem({
                           productVariantId: customization.productVariantId,
                           quantity: 1,

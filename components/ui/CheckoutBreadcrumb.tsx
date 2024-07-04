@@ -34,19 +34,25 @@ export default function () {
         </span>
 
         <div class="flex items-center gap-2 mx-6">
-          <a
-            href="/login"
+          <button
+            type="button"
             class={`text-sm ${path === "/login" ? "font-bold" : ""}`}
+            onClick={() => {
+              location.href = `/login?returnUrl=${location.pathname}`;
+            }}
           >
             Login
-          </a>
+          </button>
           <span class="text-sm">-</span>
-          <a
-            href="/signup"
+          <button
+            type="button"
+            onClick={() => {
+              location.href = `/signup?returnUrl=${location.pathname}`;
+            }}
             class={`text-sm ${path === "/signup" ? "font-bold" : ""}`}
           >
             Signup
-          </a>
+          </button>
         </div>
 
         <button

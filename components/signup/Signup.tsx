@@ -38,7 +38,7 @@ export default function ({ isPartialSignup }: ReturnType<typeof loader>) {
                 isPartialSignup && "flex-col",
               )}
               // biome-ignore format: ...
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
 
                 const form = e.target as HTMLFormElement;
@@ -111,11 +111,25 @@ export default function ({ isPartialSignup }: ReturnType<typeof loader>) {
                 console.log(data);
 
                 if (isPartialSignup) {
-                  invoke.wake.actions.signupPartialPerson(data).then(
+                  await invoke.wake.actions.signupPartialPerson(data).then(
                     console.log,
                   );
                 } else {
-                  invoke.wake.actions.signupPerson(data).then(console.log);
+                  await invoke.wake.actions.signupPerson(data).then(
+                    console.log,
+                  );
+                  await invoke.wake.actions.login({
+                    input: email,
+                    pass: password,
+                  });
+                }
+
+                const returnUrl = new URLSearchParams(location.search).get(
+                  "returnUrl",
+                );
+
+                if (returnUrl) {
+                  location.href = returnUrl;
                 }
               }}
             >
@@ -445,7 +459,7 @@ export default function ({ isPartialSignup }: ReturnType<typeof loader>) {
                 isPartialSignup && "flex-col",
               )}
               // biome-ignore format: ...
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
 
                 const form = e.target as HTMLFormElement;
@@ -510,11 +524,25 @@ export default function ({ isPartialSignup }: ReturnType<typeof loader>) {
                 console.log(data);
 
                 if (isPartialSignup) {
-                  invoke.wake.actions.signupPartialCompany(data).then(
+                  await invoke.wake.actions.signupPartialCompany(data).then(
                     console.log,
                   );
                 } else {
-                  invoke.wake.actions.signupCompany(data).then(console.log);
+                  await invoke.wake.actions.signupCompany(data).then(
+                    console.log,
+                  );
+                  await invoke.wake.actions.login({
+                    input: email,
+                    pass: password,
+                  });
+                }
+
+                const returnUrl = new URLSearchParams(location.search).get(
+                  "returnUrl",
+                );
+
+                if (returnUrl) {
+                  location.href = returnUrl;
                 }
               }}
             >

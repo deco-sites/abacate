@@ -14,7 +14,7 @@ import nonNullable from "../../sdk/nonNullable.ts";
 import { useOffer } from "../../sdk/useOffer.ts";
 import CheckoutBreadcrumb from "../ui/CheckoutBreadcrumb.tsx";
 import Icon from "../ui/Icon.tsx";
-import { useUser } from "apps/vtex/hooks/useUser.ts";
+import { useUser } from "apps/wake/hooks/useUser.ts";
 
 const { cart, updateItem, addCoupon } = useCart();
 const { user } = useUser();
