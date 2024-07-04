@@ -4,10 +4,6 @@ import Image from "apps/website/components/Image.tsx";
 import type { Platform } from "../../apps/site.ts";
 import { SendEventOnClick } from "../../components/Analytics.tsx";
 import Avatar from "../../components/ui/Avatar.tsx";
-import {
-  default as WishlistButtonVtex,
-  default as WishlistButtonWake,
-} from "../../islands/WishlistButton/vtex.tsx";
 import { clx } from "../../sdk/clx.ts";
 import { formatPrice } from "../../sdk/format.ts";
 import { relative } from "../../sdk/url.ts";
@@ -31,17 +27,10 @@ interface Props {
 const WIDTH = 200;
 const HEIGHT = 279;
 
-function ProductCard({
-  product,
-  preload,
-  itemListName,
-  platform,
-  index,
-}: Props) {
+function ProductCard({ product, preload, itemListName, index }: Props) {
   const { url, productID, name, image: images, offers, isVariantOf } = product;
   const id = `product-card-${productID}`;
   const hasVariant = isVariantOf?.hasVariant ?? [];
-  const productGroupID = isVariantOf?.productGroupID;
   const description = product.description || isVariantOf?.description;
   const [front, back] = images ?? [];
   const { listPrice, price, installments } = useOffer(offers);
@@ -76,10 +65,7 @@ function ProductCard({
       />
 
       <div class="flex flex-col gap-2 lg:group-hover:-translate-y-2">
-        <figure
-          class="relative overflow-hidden"
-          style={{ aspectRatio }}
-        >
+        <figure class="relative overflow-hidden" style={{ aspectRatio }}>
           {/* Wishlist button */}
           <div
             class={clx(
@@ -98,7 +84,8 @@ function ProductCard({
               OFF
             </div>
             <div class="lg:group-hover:block">
-              {/* {platform === "vtex" && (
+              {
+                /* {platform === "vtex" && (
                 <WishlistButtonWake
                   productGroupID={productGroupID}
                   productID={productID}
@@ -109,7 +96,8 @@ function ProductCard({
                   productGroupID={productGroupID}
                   productID={productID}
                 />
-              )} */}
+              )} */
+              }
             </div>
           </div>
 
@@ -198,9 +186,7 @@ function ProductCard({
           <span class="line-through text-sm">
             {formatPrice(listPrice, offers?.priceCurrency)}
           </span>
-          <span>
-            {formatPrice(price, offers?.priceCurrency)}
-          </span>
+          <span>{formatPrice(price, offers?.priceCurrency)}</span>
         </div>
 
         {/* Installments */}
@@ -208,11 +194,7 @@ function ProductCard({
           ou {installments}
         </span>
 
-        <a
-          href={relativeUrl}
-          aria-label="view product"
-          class="btn btn-block"
-        >
+        <a href={relativeUrl} aria-label="view product" class="btn btn-block">
           Ver produto
         </a>
       </div>

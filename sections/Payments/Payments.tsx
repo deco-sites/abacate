@@ -1,1 +1,1 @@
-export { default, loader } from '../../components/payments/Payments.tsx'
+export { default, loader } from "../../components/payments/Payments.tsx";

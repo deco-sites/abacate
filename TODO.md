@@ -1,14 +1,5 @@
 asd@asdasda.sadas
 
-mrfruit.squeeze@gmail.com
-
-1bb4c27d-3fc7-48b4-a985-7199f31991bc
-
-977b5261-9e43-47d8-bca2-a072557739c8
-
-precisa deslogar depois de finalizar a compra
-pra conseguir comprar de novo?
-
 ## Carrinho (/carrinho)
 
 - [x] Lista de produtos
@@ -66,8 +57,8 @@ pra conseguir comprar de novo?
 
 ## Confirmação (/Confirmacao)
 
-*Impeditivo*
-O pagamento da adyen não funciona corretamente, não retorna o código do pix por exemplo
+_Impeditivo_ O pagamento da adyen não funciona corretamente, não retorna o
+código do pix por exemplo
 
 - [x] Resumo do pedido
 - [x] Informações do pedido
@@ -76,7 +67,6 @@ O pagamento da adyen não funciona corretamente, não retorna o código do pix p
 - [x] Lista de produtos comprados
 - [x] Imprimir página
 
-
 ## (Página extra) Login/Cadastro (/login)
 
 - [x] Fazer a página
@@ -84,6 +74,3 @@ O pagamento da adyen não funciona corretamente, não retorna o código do pix p
 - [x] Cadastro
 - [ ] Google
 - [ ] Facebook
-
-The request exceeded the expected time
-Alterar rota callback google pro novo checkout

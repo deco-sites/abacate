@@ -15,8 +15,8 @@ function WishlistButton({
   productID,
 }: Props) {
   console.log(
-    'asopdkoaskdoaskdoaksdo'
-  )
+    "asopdkoaskdoaskdoaksdo",
+  );
   const { user } = useUser();
   const { loading, addItem, removeItem, getItem } = useWishlist();
   const listItem = useComputed(() =>

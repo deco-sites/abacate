@@ -1,5 +1,4 @@
 import { useSignal } from "@preact/signals";
-import { invoke } from "../../runtime.ts";
 import type { Product } from "apps/commerce/types.ts";
 import type { JSX } from "preact";
 
@@ -7,21 +6,21 @@ export interface Props {
   productID: Product["productID"];
 }
 
-function Notify({ productID }: Props) {
+function Notify({ productID: _productID }: Props) {
   const loading = useSignal(false);
 
-  const handleSubmit: JSX.GenericEventHandler<HTMLFormElement> = async (e) => {
+  const handleSubmit: JSX.GenericEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
 
     try {
       loading.value = true;
 
-      const name = (e.currentTarget.elements.namedItem("name") as RadioNodeList)
-        ?.value;
-      const email =
+      const _name =
+        (e.currentTarget.elements.namedItem("name") as RadioNodeList)?.value;
+      const _email =
         (e.currentTarget.elements.namedItem("email") as RadioNodeList)?.value;
 
-      await invoke.vtex.actions.notifyme({ skuId: productID, name, email });
+      // await invoke.vtex.actions.notifyme({ skuId: productID, name, email });
     } finally {
       loading.value = false;
     }
@@ -35,7 +34,9 @@ function Notify({ productID }: Props) {
       <input placeholder="Nome" class="input input-bordered" name="name" />
       <input placeholder="Email" class="input input-bordered" name="email" />
 
-      <button class="btn disabled:loading" disabled={loading}>Enviar</button>
+      <button class="btn disabled:loading" disabled={loading}>
+        Enviar
+      </button>
     </form>
   );
 }

@@ -1,1 +1,1 @@
-export { default, loader } from '../../components/confirmacao/Confirmacao.tsx'
+export { default, loader } from "../../components/confirmacao/Confirmacao.tsx";

@@ -1,1 +1,1 @@
-export { default } from '../../components/carrinho/Carrinho.tsx'
+export { default } from "../../components/carrinho/Carrinho.tsx";

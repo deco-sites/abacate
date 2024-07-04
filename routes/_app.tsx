@@ -37,11 +37,13 @@ export default defineApp(async (_req, ctx) => {
         dangerouslySetInnerHTML={{ __html: `(${sw})();` }}
       />
 
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
       @font-face {
     font-family: 'Outfit';
-    src: url('${asset('fonts/outfit/OutfitThin-Light.woff2')}') format('woff2'),
-        url('${asset('fonts/outfit/OutfitThin-Light.woff')}') format('woff');
+    src: url('${asset("fonts/outfit/OutfitThin-Light.woff2")}') format('woff2'),
+        url('${asset("fonts/outfit/OutfitThin-Light.woff")}') format('woff');
     font-weight: 300;
     font-style: normal;
     font-display: swap;
@@ -49,8 +51,12 @@ export default defineApp(async (_req, ctx) => {
 
 @font-face {
     font-family: 'Outfit';
-    src: url('${asset('fonts/outfit/OutfitThin-ExtraLight.woff2')}') format('woff2'),
-        url('${asset('fonts/outfit/OutfitThin-ExtraLight.woff')}') format('woff');
+    src: url('${
+            asset("fonts/outfit/OutfitThin-ExtraLight.woff2")
+          }') format('woff2'),
+        url('${
+            asset("fonts/outfit/OutfitThin-ExtraLight.woff")
+          }') format('woff');
     font-weight: 200;
     font-style: normal;
     font-display: swap;
@@ -58,8 +64,8 @@ export default defineApp(async (_req, ctx) => {
 
 @font-face {
     font-family: 'Outfit';
-    src: url('${asset('fonts/outfit/OutfitThin-Thin.woff2')}') format('woff2'),
-        url('${asset('fonts/outfit/OutfitThin-Thin.woff')}') format('woff');
+    src: url('${asset("fonts/outfit/OutfitThin-Thin.woff2")}') format('woff2'),
+        url('${asset("fonts/outfit/OutfitThin-Thin.woff")}') format('woff');
     font-weight: 100;
     font-style: normal;
     font-display: swap;
@@ -67,8 +73,10 @@ export default defineApp(async (_req, ctx) => {
 
 @font-face {
     font-family: 'Outfit';
-    src: url('${asset('fonts/outfit/OutfitThin-Medium.woff2')}') format('woff2'),
-        url('${asset('fonts/outfit/OutfitThin-Medium.woff')}') format('woff');
+    src: url('${
+            asset("fonts/outfit/OutfitThin-Medium.woff2")
+          }') format('woff2'),
+        url('${asset("fonts/outfit/OutfitThin-Medium.woff")}') format('woff');
     font-weight: 500;
     font-style: normal;
     font-display: swap;
@@ -76,8 +84,10 @@ export default defineApp(async (_req, ctx) => {
 
 @font-face {
     font-family: 'Outfit';
-    src: url('${asset('fonts/outfit/OutfitThin-SemiBold.woff2')}') format('woff2'),
-        url('${asset('fonts/outfit/OutfitThin-SemiBold.woff')}') format('woff');
+    src: url('${
+            asset("fonts/outfit/OutfitThin-SemiBold.woff2")
+          }') format('woff2'),
+        url('${asset("fonts/outfit/OutfitThin-SemiBold.woff")}') format('woff');
     font-weight: 600;
     font-style: normal;
     font-display: swap;
@@ -85,8 +95,10 @@ export default defineApp(async (_req, ctx) => {
 
 @font-face {
     font-family: 'Outfit';
-    src: url('${asset('fonts/outfit/OutfitThin-Regular.woff2')}') format('woff2'),
-        url('${asset('fonts/outfit/OutfitThin-Regular.woff')}') format('woff');
+    src: url('${
+            asset("fonts/outfit/OutfitThin-Regular.woff2")
+          }') format('woff2'),
+        url('${asset("fonts/outfit/OutfitThin-Regular.woff")}') format('woff');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -94,8 +106,8 @@ export default defineApp(async (_req, ctx) => {
 
 @font-face {
     font-family: 'Outfit';
-    src: url('${asset('fonts/outfit/OutfitThin-Bold.woff2')}') format('woff2'),
-        url('${asset('fonts/outfit/OutfitThin-Bold.woff')}') format('woff');
+    src: url('${asset("fonts/outfit/OutfitThin-Bold.woff2")}') format('woff2'),
+        url('${asset("fonts/outfit/OutfitThin-Bold.woff")}') format('woff');
     font-weight: 700;
     font-style: normal;
     font-display: swap;
@@ -103,8 +115,8 @@ export default defineApp(async (_req, ctx) => {
 
 @font-face {
     font-family: 'Outfit';
-    src: url('${asset('fonts/outfit/OutfitThin-Black.woff2')}') format('woff2'),
-        url('${asset('fonts/outfit/OutfitThin-Black.woff')}') format('woff');
+    src: url('${asset("fonts/outfit/OutfitThin-Black.woff2")}') format('woff2'),
+        url('${asset("fonts/outfit/OutfitThin-Black.woff")}') format('woff');
     font-weight: 900;
     font-style: normal;
     font-display: swap;
@@ -112,13 +124,19 @@ export default defineApp(async (_req, ctx) => {
 
 @font-face {
     font-family: 'Outfit';
-    src: url('${asset('fonts/outfit/OutfitThin-ExtraBold.woff2')}') format('woff2'),
-        url('${asset('fonts/outfit/OutfitThin-ExtraBold.woff')}') format('woff');
+    src: url('${
+            asset("fonts/outfit/OutfitThin-ExtraBold.woff2")
+          }') format('woff2'),
+        url('${
+            asset("fonts/outfit/OutfitThin-ExtraBold.woff")
+          }') format('woff');
     font-weight: 800;
     font-style: normal;
     font-display: swap;
 }  
-      ` }}/>
+      `,
+        }}
+      />
     </>
   );
 });
