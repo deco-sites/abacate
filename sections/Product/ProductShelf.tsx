@@ -14,7 +14,7 @@ export function ErrorFallback({ error }: { error?: Error }) {
   return (
     <div>
       <h2>Oops! Something went wrong.</h2>
-      <p>{error?.message}</p>
+      <pre>{JSON.stringify(error, null, 4)}</pre>
     </div>
   );
 }
