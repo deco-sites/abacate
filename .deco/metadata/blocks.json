@@ -273,10 +273,6 @@
     "blockType": "matchers",
     "__resolveType": "website/matchers/random.ts"
   },
-  "/.deco/blocks/checkout.json": {
-    "blockType": "apps",
-    "__resolveType": "decohub/apps/checkout.ts"
-  },
   "/.deco/blocks/deco-wake.json": {
     "blockType": "apps",
     "__resolveType": "site/apps/deco/wake.ts"

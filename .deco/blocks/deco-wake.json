@@ -2,7 +2,7 @@
   "__resolveType": "site/apps/deco/wake.ts",
   "storefrontToken": {
     "__resolveType": "website/loaders/secret.ts",
-    "encrypted": "01c5bbb737051c77824f87b84cf0195e2b2dcb56a29befe6b65627c5860029dd2879b4614fe9c2f6a58534c4101f115a",
+    "encrypted": "acd06a3720c29c28b35f08502cc2a0d6311befbacbcab1e4074909551b3b313c2384dc30078addbcb38d939d52c4eb35",
     "name": "ABACATE"
   },
   "platform": "wake",
