@@ -51,10 +51,6 @@
     "blockType": "sections",
     "__resolveType": "site/sections/Miscellaneous/CookieConsent.tsx"
   },
-  "/.deco/blocks/Deco%20HUB.json": {
-    "blockType": "apps",
-    "__resolveType": "site/apps/decohub.ts"
-  },
   "/.deco/blocks/Desktop.json": {
     "blockType": "matchers",
     "__resolveType": "website/matchers/device.ts"
@@ -227,10 +223,6 @@
     "blockType": "sections",
     "__resolveType": "site/sections/Content/Testimonials.tsx"
   },
-  "/.deco/blocks/Workflows.json": {
-    "blockType": "apps",
-    "__resolveType": "decohub/apps/workflows.ts"
-  },
   "/.deco/blocks/files.json": {
     "blockType": "apps",
     "__resolveType": "decohub/apps/files.ts"
@@ -324,5 +316,9 @@
     "path": "/signup",
     "blockType": "pages",
     "__resolveType": "website/pages/Page.tsx"
+  },
+  "/.deco/blocks/deco-workflows.json": {
+    "blockType": "apps",
+    "__resolveType": "site/apps/deco/workflows.ts"
   }
 }
