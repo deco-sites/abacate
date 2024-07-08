@@ -1576,7 +1576,7 @@
       "loader": {
         "data": {
           "count": 4,
-          "__resolveType": "vtex/loaders/intelligentSearch/suggestions.ts"
+          "__resolveType": "wake/loaders/productList.tssuggestions.ts"
         },
         "__resolveType": "resolved"
       },
@@ -2143,7 +2143,7 @@
         "count": 8,
         "query": "Casacos"
       },
-      "__resolveType": "vtex/loaders/intelligentSearch/productList.ts"
+      "__resolveType": "wake/loaders/productList.tsproductList.ts"
     },
     "cardLayout": {
       "hide": {},
@@ -2175,7 +2175,7 @@
         "count": 8,
         "query": "Camiseta"
       },
-      "__resolveType": "vtex/loaders/intelligentSearch/productList.ts"
+      "__resolveType": "wake/loaders/productList.tsproductList.ts"
     },
     "cardLayout": {
       "hide": {},
@@ -2207,7 +2207,7 @@
         "count": 8,
         "collection": "139"
       },
-      "__resolveType": "vtex/loaders/intelligentSearch/productList.ts"
+      "__resolveType": "wake/loaders/productList.tsproductList.ts"
     },
     "cardLayout": {
       "hide": {},
@@ -2240,7 +2240,7 @@
         "count": 8,
         "query": "Vestidos"
       },
-      "__resolveType": "vtex/loaders/intelligentSearch/productList.ts"
+      "__resolveType": "wake/loaders/productList.tsproductList.ts"
     },
     "cardLayout": {
       "hide": {
@@ -2276,7 +2276,7 @@
         "count": 8,
         "query": "Saia"
       },
-      "__resolveType": "vtex/loaders/intelligentSearch/productList.ts"
+      "__resolveType": "wake/loaders/productList.tsproductList.ts"
     },
     "cardLayout": {
       "hide": {
@@ -2315,7 +2315,7 @@
         "count": 8,
         "query": "Camisa"
       },
-      "__resolveType": "vtex/loaders/intelligentSearch/productList.ts"
+      "__resolveType": "wake/loaders/productList.tsproductList.ts"
     },
     "cardLayout": {
       "hide": {
@@ -2360,11 +2360,7 @@
       "__resolveType": "algolia/loaders/product/listingPage.ts",
       "sortFacetValuesBy": "count"
     },
-    "extensions": [
-      {
-        "__resolveType": "vtex/loaders/product/extensions/listingPage.ts"
-      }
-    ],
+    "extensions": [],
     "__resolveType": "commerce/loaders/product/extensions/listingPage.ts"
   },
   "Shoppable Banner - 01": {
@@ -2868,7 +2864,7 @@
             "collection": "139"
           },
           "crossSelling": "similars",
-          "__resolveType": "vtex/loaders/intelligentSearch/productList.ts"
+          "__resolveType": "wake/loaders/productList.tsproductList.ts"
         },
         "cardLayout": {
           "layout": {
@@ -2963,7 +2959,7 @@
               "count": 3,
               "query": "camisa"
             },
-            "__resolveType": "vtex/loaders/intelligentSearch/productList.ts"
+            "__resolveType": "wake/loaders/productList.tsproductList.ts"
           },
           "cardLayout": {
             "layout": {
@@ -3006,7 +3002,7 @@
                 "count": 8,
                 "query": "vestido"
               },
-              "__resolveType": "vtex/loaders/intelligentSearch/productList.ts"
+              "__resolveType": "wake/loaders/productList.tsproductList.ts"
             }
           },
           {
@@ -3017,7 +3013,7 @@
                 "count": 8,
                 "collection": "140"
               },
-              "__resolveType": "vtex/loaders/intelligentSearch/productList.ts"
+              "__resolveType": "wake/loaders/productList.tsproductList.ts"
             }
           }
         ],
@@ -3086,7 +3082,7 @@
             "count": 4,
             "collection": "139"
           },
-          "__resolveType": "vtex/loaders/intelligentSearch/productList.ts"
+          "__resolveType": "wake/loaders/productList.tsproductList.ts"
         },
         "cardLayout": {
           "__resolveType": "Product Card Layout - 01"
