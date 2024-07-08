@@ -155,7 +155,7 @@ export default function () {
               const returnUrl =
                 new URLSearchParams(location.search).get("returnUrl") ?? "/";
 
-              location.href = `/signup?partial=1&returnUrl=${returnUrl}`;
+              location.href = `/signup?returnUrl=${returnUrl}`;
             }}
           >
             CADASTRE-SE EM NOSSA LOJA
