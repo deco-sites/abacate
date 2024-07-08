@@ -7,3 +7,14 @@ export function LoadingFallback() {
     </div>
   );
 }
+
+export function ErrorFallback({ error }: { error?: Error }) {
+  // Your error handling logic goes here
+  // You can display an error message, log the error, or render a fallback UI
+  return (
+    <div>
+      <h2>Oops! Something went wrong.</h2>
+      <p>{error?.message}</p>
+    </div>
+  );
+}
