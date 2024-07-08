@@ -2143,7 +2143,7 @@
         "count": 8,
         "query": "Casacos"
       },
-      "__resolveType": "wake/loaders/productList.tsproductList.ts"
+      "__resolveType": "wake/loaders/productList.ts"
     },
     "cardLayout": {
       "hide": {},
@@ -2175,7 +2175,7 @@
         "count": 8,
         "query": "Camiseta"
       },
-      "__resolveType": "wake/loaders/productList.tsproductList.ts"
+      "__resolveType": "wake/loaders/productList.ts"
     },
     "cardLayout": {
       "hide": {},
@@ -2207,7 +2207,7 @@
         "count": 8,
         "collection": "139"
       },
-      "__resolveType": "wake/loaders/productList.tsproductList.ts"
+      "__resolveType": "wake/loaders/productList.ts"
     },
     "cardLayout": {
       "hide": {},
@@ -2240,7 +2240,7 @@
         "count": 8,
         "query": "Vestidos"
       },
-      "__resolveType": "wake/loaders/productList.tsproductList.ts"
+      "__resolveType": "wake/loaders/productList.ts"
     },
     "cardLayout": {
       "hide": {
@@ -2276,7 +2276,7 @@
         "count": 8,
         "query": "Saia"
       },
-      "__resolveType": "wake/loaders/productList.tsproductList.ts"
+      "__resolveType": "wake/loaders/productList.ts"
     },
     "cardLayout": {
       "hide": {
@@ -2315,7 +2315,7 @@
         "count": 8,
         "query": "Camisa"
       },
-      "__resolveType": "wake/loaders/productList.tsproductList.ts"
+      "__resolveType": "wake/loaders/productList.ts"
     },
     "cardLayout": {
       "hide": {
@@ -2864,7 +2864,7 @@
             "collection": "139"
           },
           "crossSelling": "similars",
-          "__resolveType": "wake/loaders/productList.tsproductList.ts"
+          "__resolveType": "wake/loaders/productList.ts"
         },
         "cardLayout": {
           "layout": {
@@ -2959,7 +2959,7 @@
               "count": 3,
               "query": "camisa"
             },
-            "__resolveType": "wake/loaders/productList.tsproductList.ts"
+            "__resolveType": "wake/loaders/productList.ts"
           },
           "cardLayout": {
             "layout": {
@@ -3002,7 +3002,7 @@
                 "count": 8,
                 "query": "vestido"
               },
-              "__resolveType": "wake/loaders/productList.tsproductList.ts"
+              "__resolveType": "wake/loaders/productList.ts"
             }
           },
           {
@@ -3013,7 +3013,7 @@
                 "count": 8,
                 "collection": "140"
               },
-              "__resolveType": "wake/loaders/productList.tsproductList.ts"
+              "__resolveType": "wake/loaders/productList.ts"
             }
           }
         ],
@@ -3082,7 +3082,7 @@
             "count": 4,
             "collection": "139"
           },
-          "__resolveType": "wake/loaders/productList.tsproductList.ts"
+          "__resolveType": "wake/loaders/productList.ts"
         },
         "cardLayout": {
           "__resolveType": "Product Card Layout - 01"
