@@ -104,7 +104,7 @@ export default function ({ id }: ReturnType<typeof loader>) {
               ? "Aguardando Pagamento"
               : order.orderStatus === "PAID"
               ? "Pago"
-              : "???"}
+              : order.orderStatus}
           </span>
           <span>
             Você pode acompanhar o status do seu pedido em Minha Conta {">"}

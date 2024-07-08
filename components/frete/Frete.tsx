@@ -14,6 +14,7 @@ import { useOffer } from "../../sdk/useOffer.ts";
 import { formatShipping, Total } from "../carrinho/Carrinho.tsx";
 import CheckoutBreadcrumb from "../ui/CheckoutBreadcrumb.tsx";
 import Icon from "../ui/Icon.tsx";
+import { useEffect } from "preact/hooks";
 
 const address = signal<
   Awaited<ReturnType<typeof invoke.wake.loaders.userAddresses>>
@@ -34,17 +35,16 @@ const cartProducts = computed(() =>
   (cart.value?.products || []).filter(nonNullable)
 );
 
-const { user, loading: loadingUser } = useUser();
+const { user, updateUser } = useUser();
 const { cart, updateItem, addCoupon, removeCoupon, updateCart, addItem } =
   useCart();
 
 export default function () {
   const loading = useSignal(true);
-  const isFirstLoad = useSignal(true);
 
-  useSignalEffect(() => {
+  useEffect(() => {
     (async () => {
-      if (!isFirstLoad.value || (!user.value && loadingUser.value)) return;
+      await Promise.all([updateCart(), updateUser()]);
 
       if (user.value) {
         address.value = await invoke.wake.loaders.userAddresses();
@@ -58,9 +58,8 @@ export default function () {
       }
 
       loading.value = false;
-      isFirstLoad.value = false;
     })();
-  });
+  }, []);
 
   useSignalEffect(() => {
     (async () => {
@@ -79,13 +78,10 @@ export default function () {
           ]),
         ),
       );
-
-      console.log({
-        products: products.value,
-        customizations: customizations.value,
-      });
     })();
   });
+
+  console.log(cart.value);
 
   if (loading.value) return null;
 

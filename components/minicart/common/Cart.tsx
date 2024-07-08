@@ -33,7 +33,7 @@ function Cart({
   currency,
   discounts,
   freeShippingTarget,
-  checkoutHref,
+  checkoutHref: _checkoutHref,
   itemToAnalyticsItem,
   onUpdateQuantity,
   onAddCoupon,
@@ -128,7 +128,7 @@ function Cart({
               </div>
 
               <div class="p-4">
-                <a class="inline-block w-full" href={checkoutHref}>
+                <a class="inline-block w-full" href="/carrinho">
                   <Button
                     data-deco="buy-button"
                     class="btn-primary btn-block"
