@@ -15,6 +15,7 @@ import { useOffer } from "../../sdk/useOffer.ts";
 import CheckoutBreadcrumb from "../ui/CheckoutBreadcrumb.tsx";
 import Icon from "../ui/Icon.tsx";
 import { useUser } from "apps/wake/hooks/useUser.ts";
+import Loading from "../Loading.tsx";
 
 const { cart, updateItem, addCoupon } = useCart();
 const { user } = useUser();
@@ -63,7 +64,7 @@ export default function () {
     })();
   }, []);
 
-  if (loading.value) return null;
+  if (loading.value) return <Loading />;
 
   return (
     <div class="p-4 flex flex-col gap-4 min-h-screen container mx-auto max-w-[1330px]">

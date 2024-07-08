@@ -58,8 +58,6 @@ export default function () {
 
             await invoke.wake.actions.login({ input: email, pass: password })
               .then(console.log);
-            await invoke.wake.actions.associateCheckout();
-
             await updateUser();
 
             const returnUrl = new URLSearchParams(location.search).get(
@@ -155,7 +153,7 @@ export default function () {
               const returnUrl =
                 new URLSearchParams(location.search).get("returnUrl") ?? "/";
 
-              location.href = `/signup?partial=1&returnUrl=${returnUrl}`;
+              location.href = `/signup?returnUrl=${returnUrl}`;
             }}
           >
             CADASTRE-SE EM NOSSA LOJA

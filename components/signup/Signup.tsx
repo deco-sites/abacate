@@ -123,6 +123,7 @@ export default function ({ isPartialSignup }: ReturnType<typeof loader>) {
                     pass: password,
                   });
                 }
+                await invoke.wake.actions.associateCheckout();
 
                 const returnUrl = new URLSearchParams(location.search).get(
                   "returnUrl",
@@ -313,142 +314,142 @@ export default function ({ isPartialSignup }: ReturnType<typeof loader>) {
                 )}
               </div>
 
-              {!isPartialSignup && (
-                <div class="flex flex-col gap-4">
-                  <div class="flex gap-4">
-                    <div class="flex flex-col gap-2 w-full">
-                      <span class="font-medium">
-                        Quem vai receber a entrega? *
-                      </span>
-                      <input
-                        type="text"
-                        name="receiverName"
-                        class="p-2 border border-zinc-500 h-11"
-                        required
-                      />
+              <div class="flex flex-col gap-4">
+                {!isPartialSignup && (
+                  <>
+                    <div class="flex gap-4">
+                      <div class="flex flex-col gap-2 w-full">
+                        <span class="font-medium">
+                          Quem vai receber a entrega? *
+                        </span>
+                        <input
+                          type="text"
+                          name="receiverName"
+                          class="p-2 border border-zinc-500 h-11"
+                          required
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div class="flex gap-4">
-                    <div class="flex flex-col gap-2 w-1/2">
-                      <span class="font-medium">CEP *</span>
-                      <input
-                        type="text"
-                        name="cep"
-                        class="p-2 border border-zinc-500 h-11"
-                        required
-                        onInput={(e) => {
-                          const v = e.currentTarget.value
-                            .replace(/\D/g, "")
-                            .replace(
-                              /^(\d{0,5})(\d{0,3})(.*)$/,
-                              (_, $1, $2) => {
-                                let s = "";
+                    <div class="flex gap-4">
+                      <div class="flex flex-col gap-2 w-1/2">
+                        <span class="font-medium">CEP *</span>
+                        <input
+                          type="text"
+                          name="cep"
+                          class="p-2 border border-zinc-500 h-11"
+                          required
+                          onInput={(e) => {
+                            const v = e.currentTarget.value
+                              .replace(/\D/g, "")
+                              .replace(
+                                /^(\d{0,5})(\d{0,3})(.*)$/,
+                                (_, $1, $2) => {
+                                  let s = "";
 
-                                if ($1) s += $1;
-                                if ($2) s += `-${$2}`;
+                                  if ($1) s += $1;
+                                  if ($2) s += `-${$2}`;
 
-                                return s;
-                              },
-                            );
+                                  return s;
+                                },
+                              );
 
-                          e.currentTarget.value = v;
-                          const form = e.currentTarget.form;
+                            e.currentTarget.value = v;
+                            const form = e.currentTarget.form;
 
-                          if (!form) return;
+                            if (!form) return;
 
-                          if (e.currentTarget.value.length === 9) {
-                            cepDebounce(async () => {
-                              await cep.set(v.replace("-", ""));
+                            if (e.currentTarget.value.length === 9) {
+                              cepDebounce(async () => {
+                                await cep.set(v.replace("-", ""));
 
-                              const neighborhood = form.elements.namedItem(
-                                "neighborhood",
-                              ) as HTMLInputElement;
-                              const state = form.elements.namedItem(
-                                "state",
-                              ) as HTMLInputElement;
-                              const city = form.elements.namedItem(
-                                "city",
-                              ) as HTMLInputElement;
-                              const address = form.elements.namedItem(
-                                "address",
-                              ) as HTMLInputElement;
+                                const neighborhood = form.elements.namedItem(
+                                  "neighborhood",
+                                ) as HTMLInputElement;
+                                const state = form.elements.namedItem(
+                                  "state",
+                                ) as HTMLInputElement;
+                                const city = form.elements.namedItem(
+                                  "city",
+                                ) as HTMLInputElement;
+                                const address = form.elements.namedItem(
+                                  "address",
+                                ) as HTMLInputElement;
 
-                              neighborhood.value =
-                                cep.data.value.neighborhood ??
-                                  neighborhood.value;
-                              state.value = cep.data.value.state;
-                              city.value = cep.data.value.city;
-                              address.value = cep.data.value.street ?? "";
-                            });
-                          }
-                        }}
-                      />
+                                neighborhood.value =
+                                  cep.data.value.neighborhood ??
+                                    neighborhood.value;
+                                state.value = cep.data.value.state;
+                                city.value = cep.data.value.city;
+                                address.value = cep.data.value.street ?? "";
+                              });
+                            }
+                          }}
+                        />
+                      </div>
+                      <div class="flex flex-col justify-center items-center translate-y-3 underline gap-2 w-1/2">
+                        <a
+                          href="https://buscacepinter.correios.com.br/app/endereco/index.php"
+                          target="_blank"
+                          class="font-medium text-blue-500"
+                          rel="noreferrer"
+                        >
+                          Não sei o CEP
+                        </a>
+                      </div>
                     </div>
-                    <div class="flex flex-col justify-center items-center translate-y-3 underline gap-2 w-1/2">
-                      <a
-                        href="https://buscacepinter.correios.com.br/app/endereco/index.php"
-                        target="_blank"
-                        class="font-medium text-blue-500"
-                        rel="noreferrer"
-                      >
-                        Não sei o CEP
-                      </a>
+                    <div class="flex gap-4">
+                      <div class="flex flex-col gap-2 w-1/5">
+                        <span class="font-medium">Número *</span>
+                        <input
+                          type="text"
+                          name="addressNumber"
+                          class="p-2 border border-zinc-500 h-11"
+                          required
+                          onInput={(e) => {
+                            e.currentTarget.value = e.currentTarget.value
+                              .replace(/\D/g, "");
+                          }}
+                        />
+                      </div>
+                      <div class="flex flex-col gap-2 w-4/5">
+                        <span class="font-medium">Complemento</span>
+                        <input
+                          type="text"
+                          name="addressComplement"
+                          class="p-2 border border-zinc-500 h-11"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div class="flex gap-4">
-                    <div class="flex flex-col gap-2 w-1/5">
-                      <span class="font-medium">Número *</span>
-                      <input
-                        type="text"
-                        name="addressNumber"
-                        class="p-2 border border-zinc-500 h-11"
-                        required
-                        onInput={(e) => {
-                          e.currentTarget.value = e.currentTarget.value.replace(
-                            /\D/g,
-                            "",
-                          );
-                        }}
-                      />
+                    <div class="flex gap-4">
+                      <div class="flex flex-col gap-2 w-full">
+                        <span class="font-medium">Bairro *</span>
+                        <input
+                          type="text"
+                          name="neighborhood"
+                          class="p-2 border border-zinc-500 h-11"
+                          required
+                        />
+                      </div>
                     </div>
-                    <div class="flex flex-col gap-2 w-4/5">
-                      <span class="font-medium">Complemento</span>
-                      <input
-                        type="text"
-                        name="addressComplement"
-                        class="p-2 border border-zinc-500 h-11"
-                      />
+                    <div class="flex gap-4">
+                      <div class="flex flex-col gap-2 w-full">
+                        <span class="font-medium">Referência de Entrega</span>
+                        <input
+                          type="text"
+                          name="reference"
+                          class="p-2 border border-zinc-500 h-11"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div class="flex gap-4">
-                    <div class="flex flex-col gap-2 w-full">
-                      <span class="font-medium">Bairro *</span>
-                      <input
-                        type="text"
-                        name="neighborhood"
-                        class="p-2 border border-zinc-500 h-11"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div class="flex gap-4">
-                    <div class="flex flex-col gap-2 w-full">
-                      <span class="font-medium">Referência de Entrega</span>
-                      <input
-                        type="text"
-                        name="reference"
-                        class="p-2 border border-zinc-500 h-11"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-              <button
-                type="submit"
-                class="cool-btn py-2 px-4 bg-[#005CB1] rounded text-zinc-100 text-lg mt-6"
-              >
-                Cadastrar
-              </button>
+                  </>
+                )}
+                <button
+                  type="submit"
+                  class="cool-btn py-2 px-4 bg-[#005CB1] rounded text-zinc-100 text-lg mt-6"
+                >
+                  Cadastrar
+                </button>
+              </div>
             </form>
           )
           : (
@@ -536,6 +537,7 @@ export default function ({ isPartialSignup }: ReturnType<typeof loader>) {
                     pass: password,
                   });
                 }
+                await invoke.wake.actions.associateCheckout();
 
                 const returnUrl = new URLSearchParams(location.search).get(
                   "returnUrl",
@@ -701,142 +703,142 @@ export default function ({ isPartialSignup }: ReturnType<typeof loader>) {
                 )}
               </div>
 
-              {!isPartialSignup && (
-                <div class="flex flex-col gap-4">
-                  <div class="flex gap-4">
-                    <div class="flex flex-col gap-2 w-full">
-                      <span class="font-medium">
-                        Quem vai receber a entrega? *
-                      </span>
-                      <input
-                        type="text"
-                        name="receiverName"
-                        class="p-2 border border-zinc-500 h-11"
-                        required
-                      />
+              <div class="flex flex-col gap-4">
+                {!isPartialSignup && (
+                  <>
+                    <div class="flex gap-4">
+                      <div class="flex flex-col gap-2 w-full">
+                        <span class="font-medium">
+                          Quem vai receber a entrega? *
+                        </span>
+                        <input
+                          type="text"
+                          name="receiverName"
+                          class="p-2 border border-zinc-500 h-11"
+                          required
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div class="flex gap-4">
-                    <div class="flex flex-col gap-2 w-1/2">
-                      <span class="font-medium">CEP *</span>
-                      <input
-                        type="text"
-                        name="cep"
-                        class="p-2 border border-zinc-500 h-11"
-                        required
-                        onInput={(e) => {
-                          const v = e.currentTarget.value
-                            .replace(/\D/g, "")
-                            .replace(
-                              /^(\d{0,5})(\d{0,3})(.*)$/,
-                              (_, $1, $2) => {
-                                let s = "";
+                    <div class="flex gap-4">
+                      <div class="flex flex-col gap-2 w-1/2">
+                        <span class="font-medium">CEP *</span>
+                        <input
+                          type="text"
+                          name="cep"
+                          class="p-2 border border-zinc-500 h-11"
+                          required
+                          onInput={(e) => {
+                            const v = e.currentTarget.value
+                              .replace(/\D/g, "")
+                              .replace(
+                                /^(\d{0,5})(\d{0,3})(.*)$/,
+                                (_, $1, $2) => {
+                                  let s = "";
 
-                                if ($1) s += $1;
-                                if ($2) s += `-${$2}`;
+                                  if ($1) s += $1;
+                                  if ($2) s += `-${$2}`;
 
-                                return s;
-                              },
-                            );
+                                  return s;
+                                },
+                              );
 
-                          e.currentTarget.value = v;
-                          const form = e.currentTarget.form;
+                            e.currentTarget.value = v;
+                            const form = e.currentTarget.form;
 
-                          if (!form) return;
+                            if (!form) return;
 
-                          if (e.currentTarget.value.length === 9) {
-                            cepDebounce(async () => {
-                              await cep.set(v.replace("-", ""));
+                            if (e.currentTarget.value.length === 9) {
+                              cepDebounce(async () => {
+                                await cep.set(v.replace("-", ""));
 
-                              const neighborhood = form.elements.namedItem(
-                                "neighborhood",
-                              ) as HTMLInputElement;
-                              const state = form.elements.namedItem(
-                                "state",
-                              ) as HTMLInputElement;
-                              const city = form.elements.namedItem(
-                                "city",
-                              ) as HTMLInputElement;
-                              const address = form.elements.namedItem(
-                                "address",
-                              ) as HTMLInputElement;
+                                const neighborhood = form.elements.namedItem(
+                                  "neighborhood",
+                                ) as HTMLInputElement;
+                                const state = form.elements.namedItem(
+                                  "state",
+                                ) as HTMLInputElement;
+                                const city = form.elements.namedItem(
+                                  "city",
+                                ) as HTMLInputElement;
+                                const address = form.elements.namedItem(
+                                  "address",
+                                ) as HTMLInputElement;
 
-                              neighborhood.value =
-                                cep.data.value.neighborhood ??
-                                  neighborhood.value;
-                              state.value = cep.data.value.state;
-                              city.value = cep.data.value.city;
-                              address.value = cep.data.value.street ?? "";
-                            });
-                          }
-                        }}
-                      />
+                                neighborhood.value =
+                                  cep.data.value.neighborhood ??
+                                    neighborhood.value;
+                                state.value = cep.data.value.state;
+                                city.value = cep.data.value.city;
+                                address.value = cep.data.value.street ?? "";
+                              });
+                            }
+                          }}
+                        />
+                      </div>
+                      <div class="flex flex-col justify-center items-center translate-y-3 underline gap-2 w-1/2">
+                        <a
+                          href="https://buscacepinter.correios.com.br/app/endereco/index.php"
+                          target="_blank"
+                          class="font-medium text-blue-500"
+                          rel="noreferrer"
+                        >
+                          Não sei o CEP
+                        </a>
+                      </div>
                     </div>
-                    <div class="flex flex-col justify-center items-center translate-y-3 underline gap-2 w-1/2">
-                      <a
-                        href="https://buscacepinter.correios.com.br/app/endereco/index.php"
-                        target="_blank"
-                        class="font-medium text-blue-500"
-                        rel="noreferrer"
-                      >
-                        Não sei o CEP
-                      </a>
+                    <div class="flex gap-4">
+                      <div class="flex flex-col gap-2 w-1/5">
+                        <span class="font-medium">Número *</span>
+                        <input
+                          type="text"
+                          name="addressNumber"
+                          class="p-2 border border-zinc-500 h-11"
+                          required
+                          onInput={(e) => {
+                            e.currentTarget.value = e.currentTarget.value
+                              .replace(/\D/g, "");
+                          }}
+                        />
+                      </div>
+                      <div class="flex flex-col gap-2 w-4/5">
+                        <span class="font-medium">Complemento</span>
+                        <input
+                          type="text"
+                          name="addressComplement"
+                          class="p-2 border border-zinc-500 h-11"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div class="flex gap-4">
-                    <div class="flex flex-col gap-2 w-1/5">
-                      <span class="font-medium">Número *</span>
-                      <input
-                        type="text"
-                        name="addressNumber"
-                        class="p-2 border border-zinc-500 h-11"
-                        required
-                        onInput={(e) => {
-                          e.currentTarget.value = e.currentTarget.value.replace(
-                            /\D/g,
-                            "",
-                          );
-                        }}
-                      />
+                    <div class="flex gap-4">
+                      <div class="flex flex-col gap-2 w-full">
+                        <span class="font-medium">Bairro *</span>
+                        <input
+                          type="text"
+                          name="neighborhood"
+                          class="p-2 border border-zinc-500 h-11"
+                          required
+                        />
+                      </div>
                     </div>
-                    <div class="flex flex-col gap-2 w-4/5">
-                      <span class="font-medium">Complemento</span>
-                      <input
-                        type="text"
-                        name="addressComplement"
-                        class="p-2 border border-zinc-500 h-11"
-                      />
+                    <div class="flex gap-4">
+                      <div class="flex flex-col gap-2 w-full">
+                        <span class="font-medium">Referência de Entrega</span>
+                        <input
+                          type="text"
+                          name="reference"
+                          class="p-2 border border-zinc-500 h-11"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div class="flex gap-4">
-                    <div class="flex flex-col gap-2 w-full">
-                      <span class="font-medium">Bairro *</span>
-                      <input
-                        type="text"
-                        name="neighborhood"
-                        class="p-2 border border-zinc-500 h-11"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div class="flex gap-4">
-                    <div class="flex flex-col gap-2 w-full">
-                      <span class="font-medium">Referência de Entrega</span>
-                      <input
-                        type="text"
-                        name="reference"
-                        class="p-2 border border-zinc-500 h-11"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-              <button
-                type="submit"
-                class="cool-btn py-2 px-4 bg-[#005CB1] rounded text-zinc-100 text-lg mt-6"
-              >
-                Cadastrar
-              </button>
+                  </>
+                )}
+                <button
+                  type="submit"
+                  class="cool-btn py-2 px-4 bg-[#005CB1] rounded text-zinc-100 text-lg mt-6"
+                >
+                  Cadastrar
+                </button>
+              </div>
             </form>
           )}
       </div>

@@ -33,7 +33,7 @@ function Cart({
   currency,
   discounts,
   freeShippingTarget,
-  checkoutHref,
+  checkoutHref: _checkoutHref,
   itemToAnalyticsItem,
   onUpdateQuantity,
   onAddCoupon,
@@ -105,9 +105,7 @@ function Cart({
                 )}
                 <div class="w-full flex justify-between px-4 text-sm">
                   <span>Subtotal</span>
-                  <span>
-                    {formatPrice(subtotal, currency, locale)}
-                  </span>
+                  <span>{formatPrice(subtotal, currency, locale)}</span>
                 </div>
                 {onAddCoupon && (
                   <Coupon onAddCoupon={onAddCoupon} coupon={coupon} />
@@ -128,7 +126,7 @@ function Cart({
               </div>
 
               <div class="p-4">
-                <a class="inline-block w-full" href={checkoutHref}>
+                <a class="inline-block w-full" href="/carrinho">
                   <Button
                     data-deco="buy-button"
                     class="btn-primary btn-block"

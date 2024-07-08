@@ -364,6 +364,8 @@ function PaymentMethods() {
   const focused = useSignal<"name" | "number" | "expiry" | "cvc" | "">("");
   const paymentScripts = useSignal([] as string[]);
 
+  console.log(cart.value?.selectedPaymentMethod);
+
   return (
     <div class="flex flex-col gap-2 w-full border border-stone-400">
       <div class="w-full flex justify-between items-center bg-stone-200 px-3 py-2">
@@ -442,7 +444,7 @@ function PaymentMethods() {
                     </div>
                 )} */
         }
-        <div class="hidden peer-has-[input[id^=Cartão]:checked]:flex">
+        <div class="hidden peer-has-[:not(input[id^=Cartão]):checked]:flex">
           <div
             dangerouslySetInnerHTML={{
               __html: cart.value?.selectedPaymentMethod?.html ?? "",
