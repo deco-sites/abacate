@@ -146,9 +146,6 @@
       "products": {
         "crossSelling": "similars",
         "__resolveType": "wake/loaders/productList.ts",
-        "first": 12,
-        "sortDirection": "ASC",
-        "sortKey": "DISCOUNT",
         "filters": {
           "attributes": {
             "id": [],
@@ -168,7 +165,10 @@
             "dcName": []
           },
           "prices": {}
-        }
+        },
+        "first": 12,
+        "sortDirection": "ASC",
+        "sortKey": "DISCOUNT"
       },
       "cardLayout": {
         "layout": {

@@ -3,7 +3,6 @@ import type { Product } from "apps/commerce/types.ts";
 import { useCart } from "apps/wake/hooks/useCart.ts";
 import { useUser } from "apps/wake/hooks/useUser.ts";
 import Image from "apps/website/components/Image.tsx";
-import { useEffect } from "preact/hooks";
 import { invoke } from "../../runtime.ts";
 import debounce from "../../sdk/debounce.ts";
 import { formatPrice } from "../../sdk/format.ts";
@@ -15,7 +14,6 @@ import { useOffer } from "../../sdk/useOffer.ts";
 import { formatShipping, Total } from "../carrinho/Carrinho.tsx";
 import CheckoutBreadcrumb from "../ui/CheckoutBreadcrumb.tsx";
 import Icon from "../ui/Icon.tsx";
-import Loading from "../Loading.tsx";
 
 const address = signal<
   Awaited<ReturnType<typeof invoke.wake.loaders.userAddresses>>
@@ -31,11 +29,12 @@ const customizations = signal<
 >({});
 
 const products = signal([] as Product[]);
+
 const cartProducts = computed(() =>
   (cart.value?.products || []).filter(nonNullable)
 );
 
-const { user, updateUser } = useUser();
+const { user, loading: loadingUser } = useUser();
 const { cart, updateItem, addCoupon, removeCoupon, updateCart, addItem } =
   useCart();
 
@@ -43,9 +42,9 @@ export default function () {
   const loading = useSignal(true);
   const isFirstLoad = useSignal(true);
 
-  useEffect(() => {
+  useSignalEffect(() => {
     (async () => {
-      await Promise.all([updateUser(), updateCart()]);
+      if (!isFirstLoad.value || (!user.value && loadingUser.value)) return;
 
       if (user.value) {
         address.value = await invoke.wake.loaders.userAddresses();
@@ -61,7 +60,7 @@ export default function () {
       loading.value = false;
       isFirstLoad.value = false;
     })();
-  }, []);
+  });
 
   useSignalEffect(() => {
     (async () => {
@@ -88,7 +87,7 @@ export default function () {
     })();
   });
 
-  if (loading.value) return <Loading />;
+  if (loading.value) return null;
 
   return (
     <div class="container mx-auto max-w-[1330px] py-6 px-4 flex flex-col gap-4 min-h-screen">
@@ -716,7 +715,6 @@ function ShippingAddress() {
                 onClick={async () => {
                   await invoke.wake.actions.selectAddress({ addressId: id });
                   await updateCart();
-
                   shipping.value = await invoke.wake.actions.shippingSimulation(
                     {
                       simulateCartItems: true,

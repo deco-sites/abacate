@@ -1,7 +1,11 @@
 export default function () {
   return (
-    <div class="w-full h-screen flex items-center justify-center">
-      <span class="loading loading-spinner" />
-    </div>
+    <video
+      src="https://media.tenor.com/g1bZgt4-tL4AAAPo/skull.mp4"
+      autoPlay
+      loop
+      muted
+      class="w-full h-full fixed top-0 left-0"
+    />
   );
 }
