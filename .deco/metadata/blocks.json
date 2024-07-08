@@ -281,12 +281,6 @@
     "blockType": "matchers",
     "__resolveType": "website/matchers/random.ts"
   },
-  "/.deco/blocks/pages-Home%2520for%2520Mobile%2520App-906989.json": {
-    "name": "Home for Mobile App",
-    "path": "/app",
-    "blockType": "pages",
-    "__resolveType": "website/pages/Page.tsx"
-  },
   "/.deco/blocks/checkout.json": {
     "blockType": "apps",
     "__resolveType": "decohub/apps/checkout.ts"
