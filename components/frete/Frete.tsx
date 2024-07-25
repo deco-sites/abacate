@@ -78,6 +78,8 @@ export default function () {
           ]),
         ),
       );
+
+      console.log(customizations.value);
     })();
   });
 
