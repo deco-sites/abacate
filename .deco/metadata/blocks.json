@@ -316,5 +316,17 @@
   "/.deco/blocks/deco-workflows.json": {
     "blockType": "apps",
     "__resolveType": "site/apps/deco/workflows.ts"
+  },
+  "/.deco/blocks/pages-Product%2520Kit-705550.json": {
+    "name": "Product Lista de Compra",
+    "path": "/produto/listacompra/:slug",
+    "blockType": "pages",
+    "__resolveType": "website/pages/Page.tsx"
+  },
+  "/.deco/blocks/pages-Product%2520Kit--615654.json": {
+    "name": "Product Kit",
+    "path": "/produto/kit/:slug",
+    "blockType": "pages",
+    "__resolveType": "website/pages/Page.tsx"
   }
 }

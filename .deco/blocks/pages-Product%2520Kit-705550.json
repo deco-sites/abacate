@@ -1,0 +1,31 @@
+{
+  "name": "Product Lista de Compra",
+  "path": "/produto/listacompra/:slug",
+  "sections": [
+    {
+      "jsonLD": {
+        "__resolveType": "PDP Loader"
+      },
+      "jsonLDs": [
+        {}
+      ],
+      "__resolveType": "commerce/sections/Seo/SeoPDP.tsx"
+    },
+    {
+      "__resolveType": "Header - 01"
+    },
+    {
+      "page": {
+        "__resolveType": "PDP Loader"
+      },
+      "__resolveType": "site/sections/Product/ProductDetails.tsx"
+    },
+    {
+      "__resolveType": "Footer - 01"
+    }
+  ],
+  "seo": {
+    "__resolveType": "website/sections/Seo/SeoV2.tsx"
+  },
+  "__resolveType": "website/pages/Page.tsx"
+}
